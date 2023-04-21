@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import * as faceapi from 'face-api.js';
 import { catchError, map } from 'rxjs';
-
+import * as fs from 'fs';
+import * as path from 'path';
 @Component({
   selector: 'app-face-recognition',
   templateUrl: './face-recognition.component.html',
@@ -23,16 +24,21 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
   video!: HTMLVideoElement;
   faceMatcher!: any;
   userLabels: string[] = [];
+  trainingData: any[] = [];
+  isLoading = true;
 
   constructor(private httpClient: HttpClient) {}
 
   ngOnInit(): void {
     this.userLabels = ['19K4081028-THANGLD', '19K4081001-NPBANH'];
     this.getFaceAPI().finally(async () => {
-      const trainingData = await this.trainingModal();
-      this.faceMatcher = new faceapi.FaceMatcher(trainingData, 0.6);
-      this.getCamera();
-      this.create();
+      await this.trainingModal().finally(() => {
+        this.isLoading = false;
+        this.faceMatcher = new faceapi.FaceMatcher(this.trainingData, 0.6);
+        console.log(JSON.stringify(this.trainingData));
+        this.getCamera();
+        this.create();
+      });
     });
   }
 
@@ -41,7 +47,7 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
   }
 
   async trainingModal() {
-    const faceDescriptors: any[] = [];
+    const faceDescriptors = [];
 
     for (const label of this.userLabels) {
       const descriptors: Float32Array[] = [];
@@ -74,6 +80,7 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
       );
     }
 
+    this.trainingData = faceDescriptors;
     return faceDescriptors;
   }
 
