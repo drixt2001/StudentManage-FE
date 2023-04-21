@@ -1,0 +1,15 @@
+::ng-deep {
+  #canvas {
+    position: absolute;
+  }
+}
+
+#container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#video {
+  opacity: 0;
+}
