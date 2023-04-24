@@ -30,15 +30,23 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
   constructor(private httpClient: HttpClient) {}
 
   ngOnInit(): void {
-    this.userLabels = ['19K4081028-THANGLD', '19K4081001-NPBANH'];
+    const modalServer = this.loadModalFromServer();
+
     this.getFaceAPI().finally(async () => {
-      await this.trainingModal().finally(() => {
-        this.isLoading = false;
+      if (modalServer.length) {
+        console.log('run');
+        this.trainingData = modalServer;
         this.faceMatcher = new faceapi.FaceMatcher(this.trainingData, 0.6);
-        console.log(JSON.stringify(this.trainingData));
         this.getCamera();
         this.create();
-      });
+      } else {
+        await this.trainingModal().finally(() => {
+          console.log('train');
+          this.faceMatcher = new faceapi.FaceMatcher(this.trainingData, 0.6);
+          this.getCamera();
+          this.create();
+        });
+      }
     });
   }
 
@@ -47,41 +55,62 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
   }
 
   async trainingModal() {
+    this.userLabels = ['19K4081028-THANGLD', '19K4081001-NPBANH'];
     const faceDescriptors = [];
 
     for (const label of this.userLabels) {
       const descriptors: Float32Array[] = [];
 
-      for (let i = 1; i <= 2; i++) {
-        this.httpClient
-          .get(`/assets/usersTraingData/${label}/${i}.jpeg`, {
-            observe: 'response',
-            responseType: 'blob',
-          })
-          .pipe(
-            map(async (res) => {
-              const image = await faceapi.fetchImage(
-                `/assets/usersTraingData/${label}/${i}.jpeg`
-              );
-              const detection = await faceapi
-                .detectSingleFace(image)
-                .withFaceLandmarks()
-                .withFaceDescriptor();
-              if (detection) {
-                descriptors.push(detection.descriptor);
-              }
-            })
-          )
-          .subscribe();
+      for (let i = 1; i <= 1; i++) {
+        const image = await faceapi.fetchImage(
+          `/assets/usersTraingData/${label}/${i}.jpeg`
+        );
+        const detection = await faceapi
+          .detectSingleFace(image)
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+        if (detection) {
+          descriptors.push(detection.descriptor);
+        }
       }
 
-      faceDescriptors.push(
+      await faceDescriptors.push(
         new faceapi.LabeledFaceDescriptors(label, descriptors)
       );
     }
 
     this.trainingData = faceDescriptors;
+
     return faceDescriptors;
+  }
+
+  updateModalToServer() {
+    this.httpClient
+      .post('http://localhost:8000/api', { data: this.trainingData })
+      .subscribe();
+  }
+
+  loadModalFromServer() {
+    const serverFaceDescriptors: any[] = [];
+
+    this.httpClient
+      .get<any[]>('http://localhost:8000/api')
+      .subscribe(async (faceDescriptors) => {
+        for (let i = 0; i < faceDescriptors.length; i++) {
+          for (let j = 0; j < faceDescriptors[i].descriptors.length; j++) {
+            faceDescriptors[i].descriptors[j] = new Float32Array(
+              Object.values(faceDescriptors[i].descriptors[j])
+            );
+          }
+          serverFaceDescriptors.push(
+            new faceapi.LabeledFaceDescriptors(
+              faceDescriptors[i].label,
+              faceDescriptors[i].descriptors
+            )
+          );
+        }
+      });
+    return serverFaceDescriptors;
   }
 
   async getFaceAPI() {
@@ -102,7 +131,6 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
   }
 
   create() {
-    console.log(this.faceMatcher);
     this.video.addEventListener('playing', () => {
       const canvas = faceapi.createCanvas(this.video);
       canvas.id = 'canvas';
