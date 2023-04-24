@@ -1,0 +1,103 @@
+<div class="container">
+  <div class="filter-bar">
+    <!-- Doi tuong -->
+    <div class="filter-child">
+      <nz-select
+        nzShowSearch
+        nzAllowClear
+        nzPlaceHolder="Chọn Đối Tượng"
+        [(ngModel)]="selectedRole"
+      >
+        <nz-option nzLabel="Giảng Viên" nzValue="teacher"></nz-option>
+        <nz-option nzLabel="Sinh Viên" nzValue="student"></nz-option>
+      </nz-select>
+    </div>
+    <!-- Doi tuong -->
+
+    <!-- Khoa -->
+    <div class="filter-child">
+      <nz-select
+        nzShowSearch
+        nzAllowClear
+        nzPlaceHolder="Khoa"
+        [(ngModel)]="selectedDepartment"
+      >
+        <nz-option nzLabel="QTKD" nzValue="qtkd"></nz-option>
+        <nz-option nzLabel="KT-TC" nzValue="kttc"></nz-option>
+        <nz-option nzLabel="KTPT" nzValue="ktpt"></nz-option>
+        <nz-option nzLabel="HTTTKT" nzValue="htttkt"></nz-option>
+        <nz-option nzLabel="KTCT" nzValue="ktct"></nz-option>
+      </nz-select>
+    </div>
+    <!-- Khoa -->
+
+    <!-- Lop -->
+    <div
+      class="filter-child"
+      *ngIf="selectedRole === 'student' && !!selectedDepartment"
+    >
+      <nz-select
+        nzShowSearch
+        nzAllowClear
+        nzPlaceHolder="Lớp"
+        [(ngModel)]="selectedClass"
+      >
+        <nz-option nzLabel="K53 THKT" nzValue="thkt"></nz-option>
+        <nz-option nzLabel="K53 TKKD" nzValue="tkkd"></nz-option>
+      </nz-select>
+    </div>
+    <!-- Lop -->
+
+    <!-- Ten -->
+    <div class="filter-child">
+      <input
+        class="name"
+        nz-input
+        placeholder="Tìm Theo Tên"
+        [(ngModel)]="nameValue"
+      />
+    </div>
+    <!-- Ten -->
+
+    <!-- Button -->
+    <button (click)="search()" nz-button nzType="primary">
+      <span nz-icon nzType="search"></span>
+      Tìm Kiếm
+    </button>
+    <!-- Button -->
+  </div>
+
+  <div class="table-bar">
+    <nz-table nzBordered #table [nzData]="personalData">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th *ngIf="selectedRole === 'teacher'">Mã Giảng Viên</th>
+          <th *ngIf="selectedRole === 'student'">Mã Sinh Viên</th>
+          <th>Họ Và Tên</th>
+          <th>Ngày Sinh</th>
+          <th>Khoa</th>
+          <th *ngIf="selectedRole === 'student'">Lớp</th>
+          <th>Số Lượng Ảnh</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of table.data">
+          <td>{{ table.data.indexOf(data) + 1 }}</td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.birthday }}</td>
+          <td>{{ data.department }}</td>
+          <td *ngIf="selectedRole === 'student'">{{ data.class }}</td>
+          <td>{{ data.pictures }}</td>
+          <td>
+            <a>Xem</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a>Xóa</a>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
