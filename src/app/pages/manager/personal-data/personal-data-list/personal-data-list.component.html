@@ -92,7 +92,7 @@
           <td *ngIf="selectedRole === 'student'">{{ data.class }}</td>
           <td>{{ data.pictures }}</td>
           <td>
-            <a>Xem</a>
+            <a [routerLink]="[data.id]">Xem</a>
             <nz-divider nzType="vertical"></nz-divider>
             <a>Xóa</a>
           </td>

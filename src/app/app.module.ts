@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AntDesignModule } from './modules/ant-design/ant-design.module';
 import { PersonalDataListModule } from './pages/manager/personal-data/personal-data-list/personal-data-list.module';
+import { PersonalDataViewModule } from './pages/manager/personal-data/personal-data-view/personal-data-view.module';
 
 registerLocaleData(vi);
 
@@ -31,6 +32,7 @@ registerLocaleData(vi);
     // page
     FaceRecognitionModule,
     PersonalDataListModule,
+    PersonalDataViewModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: vi_VN }],
   bootstrap: [AppComponent],

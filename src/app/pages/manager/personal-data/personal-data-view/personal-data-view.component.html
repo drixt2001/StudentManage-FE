@@ -1,0 +1,138 @@
+<ul nz-menu nzMode="horizontal">
+  <li nz-menu-item nzSelected (click)="changeTab('profile')">
+    <span nz-icon nzType="user" nzTheme="outline"></span>
+    Thông Tin
+  </li>
+
+  <li nz-menu-item (click)="changeTab('pictures')">
+    <span nz-icon nzType="picture" nzTheme="outline"></span>
+    Ảnh Cá Nhân
+  </li>
+</ul>
+
+<div class="container">
+  <div *ngIf="selectedTab === 'profile'" class="profile bar">
+    <div class="profile content">
+      <nz-avatar [nzSize]="300" nzIcon="user"></nz-avatar>
+
+      <form class="profile form" nz-form [nzLayout]="'vertical'">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Mã</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              readonly="true"
+              nz-input
+              formControlName="ID"
+              placeholder="Mã SV / Mã GV"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Họ và Tên</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              readonly="true"
+              nz-input
+              formControlName="Name"
+              placeholder="Tên SV / Tên GV"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Ngày Sinh</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              readonly="true"
+              nz-input
+              formControlName="Name"
+              placeholder="Ngày/Tháng/Năm"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-control [nzSpan]="null" [nzOffset]="null">
+            <button nz-button nzType="primary">Cập Nhật</button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+
+      <form class="profile form" nz-form [nzLayout]="'vertical'">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Khoa</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              readonly="true"
+              nz-input
+              formControlName="Name"
+              placeholder="Khoa chủ quản"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Lớp</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              readonly="true"
+              nz-input
+              formControlName="Name"
+              placeholder="Lớp SV"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Tổng Số Ảnh</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              readonly="true"
+              nz-input
+              formControlName="Name"
+              placeholder="Số Ảnh Huấn Luyện"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-control [nzSpan]="null" [nzOffset]="null"> </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="selectedTab === 'pictures'" class="pictures bar">
+    <div class="clearfix">
+      <nz-upload
+        nzAction="http://localhost:8000/personal/upload/19K4081028"
+        nzListType="picture-card"
+        [(nzFileList)]="fileList"
+        [nzShowButton]="fileList.length < 8"
+        [nzPreview]="handlePreview"
+        [nzRemove]="handleRemove"
+      >
+        <div>
+          <span nz-icon nzType="plus"></span>
+          <div style="margin-top: 8px">Upload</div>
+        </div>
+      </nz-upload>
+
+      <nz-modal
+        [nzVisible]="previewVisible"
+        [nzContent]="modalContent"
+        [nzFooter]="null"
+        (nzOnCancel)="previewVisible = false"
+      >
+        <ng-template #modalContent>
+          <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+        </ng-template>
+      </nz-modal>
+    </div>
+    <div class="action-bar">
+      <button (click)="updateDataModel()" nz-button nzType="primary">
+        Cập Nhật Mô Hình
+      </button>
+    </div>
+  </div>
+</div>

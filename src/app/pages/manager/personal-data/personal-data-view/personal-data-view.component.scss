@@ -1,0 +1,22 @@
+.container .bar {
+  margin: 20px;
+}
+
+.profile.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.profile.form {
+  margin: 0 32px;
+  width: 320px;
+
+  nz-form-item:last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+.action-bar {
+  margin-top: 24px;
+}

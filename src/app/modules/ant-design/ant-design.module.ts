@@ -10,6 +10,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -24,6 +30,11 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzIconModule,
     NzTableModule,
     NzDividerModule,
+    NzAvatarModule,
+    NzFormModule,
+    NzUploadModule,
+    NzModalModule,
+    NzSkeletonModule,
   ],
   exports: [
     NzLayoutModule,
@@ -36,6 +47,11 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzIconModule,
     NzTableModule,
     NzDividerModule,
+    NzAvatarModule,
+    NzFormModule,
+    NzUploadModule,
+    NzModalModule,
+    NzSkeletonModule,
   ],
 })
 export class AntDesignModule {}
