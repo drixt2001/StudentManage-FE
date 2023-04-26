@@ -105,6 +105,8 @@
   <div *ngIf="selectedTab === 'pictures'" class="pictures bar">
     <div class="clearfix">
       <nz-upload
+        [nzFileType]="'image/png,image/jpeg'"
+        [nzMultiple]="true"
         nzAction="http://localhost:8000/personal/upload/19K4081028"
         nzListType="picture-card"
         [(nzFileList)]="fileList"
@@ -130,8 +132,21 @@
       </nz-modal>
     </div>
     <div class="action-bar">
-      <button (click)="updateDataModel()" nz-button nzType="primary">
-        Cập Nhật Mô Hình
+      <button
+        [nzLoading]="isLoadingTrainModel"
+        (click)="updateDataModel()"
+        nz-button
+        nzType="primary"
+      >
+        Tạo Mô Hình
+      </button>
+      <button
+        *ngIf="dataModel"
+        (click)="uploadDataModel()"
+        nz-button
+        nzType="primary"
+      >
+        Tải Lên Mô Hình
       </button>
     </div>
   </div>

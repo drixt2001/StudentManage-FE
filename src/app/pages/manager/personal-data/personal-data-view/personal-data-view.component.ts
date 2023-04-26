@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { PersonalDataViewService } from './personal-data-view.service';
-import * as faceapi from 'face-api.js';
+
+import { LoadingService } from '../../../../interceptor/loading/loading.service';
+import { map, mergeMap, of } from 'rxjs';
+import { face } from '../../../../modules/face-api/face-api';
 
 @Component({
   selector: 'app-personal-data-view',
@@ -10,14 +13,17 @@ import * as faceapi from 'face-api.js';
 })
 export class PersonalDataViewComponent implements OnInit {
   selectedTab: string = 'profile';
+  isLoadingTrainModel = false;
+  dataModel: any;
+  maxNumber!: number;
 
-  constructor(private service: PersonalDataViewService) {}
+  constructor(
+    private service: PersonalDataViewService,
+    public loadingService: LoadingService
+  ) {}
 
   ngOnInit(): void {
-    this.service.getPicture('19K4081028').subscribe((val) => {
-      this.fileList = val;
-      this.getFaceAPIModel();
-    });
+    this.getListPicture();
   }
 
   changeTab(tabName: string) {
@@ -39,44 +45,65 @@ export class PersonalDataViewComponent implements OnInit {
 
   handleRemove = (file: NzUploadFile) => {
     if (file.response) {
-      return this.service.removePicture('19K4081028', file.response.name);
+      return this.service.removePicture('19K4081028', file.response.name).pipe(
+        mergeMap(() => {
+          this.getListPicture();
+          return of(true);
+        })
+      );
     } else {
-      return this.service.removePicture('19K4081028', file.name);
+      return this.service.removePicture('19K4081028', file.name).pipe(
+        mergeMap(() => {
+          this.getListPicture();
+          return of(true);
+        })
+      );
     }
   };
 
   async updateDataModel() {
-    const dataModel = await this.trainingModel('19K4081028');
-    this.service.updateModel(dataModel, '19K4081028').subscribe();
+    this.dataModel = await this.trainingModel('19K4081028');
+  }
+
+  getListPicture() {
+    this.service.getPicture('19K4081028').subscribe((val) => {
+      this.fileList = [...val.data];
+      this.maxNumber = val.maxNumber;
+    });
+  }
+
+  uploadDataModel() {
+    this.service.updateModel(this.dataModel, '19K4081028').subscribe((val) => {
+      alert(val.message);
+      this.dataModel = undefined;
+    });
   }
 
   async trainingModel(label: string) {
+    this.isLoadingTrainModel = true;
+
     let faceDescriptors: any;
 
     const descriptors: Float32Array[] = [];
 
-    for (let i = 1; i <= this.fileList.length; i++) {
-      const image = await faceapi.fetchImage(
-        `http://localhost:8000/assets/Pictures/${label}/${i}.jpg`
-      );
-      const detection = await faceapi
-        .detectSingleFace(image)
-        .withFaceLandmarks()
-        .withFaceDescriptor();
-      if (detection) {
-        descriptors.push(detection.descriptor);
+    for (let i = 1; i <= this.maxNumber; i++) {
+      const fileName = this.fileList[i - 1]?.name;
+      if (fileName) {
+        const image = await face.fetchImage(
+          `http://localhost:8000/assets/Pictures/${label}/${fileName}`
+        );
+        const detection = await face
+          .detectSingleFace(image)
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+        if (detection) {
+          descriptors.push(detection.descriptor);
+        }
       }
     }
-    faceDescriptors = new faceapi.LabeledFaceDescriptors(label, descriptors);
+    faceDescriptors = new face.LabeledFaceDescriptors(label, descriptors);
+    this.isLoadingTrainModel = false;
     return faceDescriptors;
-  }
-
-  async getFaceAPIModel() {
-    await faceapi.nets.faceLandmark68Net.loadFromUri('/assets/models');
-    await faceapi.nets.faceExpressionNet.loadFromUri('/assets/models');
-    await faceapi.nets.faceRecognitionNet.loadFromUri('/assets/models');
-    await faceapi.nets.tinyFaceDetector.loadFromUri('/assets/models');
-    await faceapi.nets.ssdMobilenetv1.loadFromUri('/assets/models');
   }
 }
 

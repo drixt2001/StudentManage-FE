@@ -15,6 +15,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @NgModule({
   declarations: [],
@@ -35,6 +36,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
     NzUploadModule,
     NzModalModule,
     NzSkeletonModule,
+    NzSpinModule,
   ],
   exports: [
     NzLayoutModule,
@@ -52,6 +54,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
     NzUploadModule,
     NzModalModule,
     NzSkeletonModule,
+    NzSpinModule,
   ],
 })
 export class AntDesignModule {}
