@@ -113,6 +113,7 @@
         [nzShowButton]="fileList.length < 8"
         [nzPreview]="handlePreview"
         [nzRemove]="handleRemove"
+        (nzChange)="handleReq($event)"
       >
         <div>
           <span nz-icon nzType="plus"></span>

@@ -61,13 +61,20 @@ export class PersonalDataViewComponent implements OnInit {
     }
   };
 
+  handleReq = (file: any) => {
+    if (file.type === 'success' && file.file.response.name) {
+      this.maxNumber++;
+      console.log(file);
+      console.log(this.maxNumber);
+    }
+  };
   async updateDataModel() {
     this.dataModel = await this.trainingModel('19K4081028');
   }
 
   getListPicture() {
     this.service.getPicture('19K4081028').subscribe((val) => {
-      this.fileList = [...val.data];
+      this.fileList = val.data;
       this.maxNumber = val.maxNumber;
     });
   }
@@ -87,7 +94,11 @@ export class PersonalDataViewComponent implements OnInit {
     const descriptors: Float32Array[] = [];
 
     for (let i = 1; i <= this.maxNumber; i++) {
-      const fileName = this.fileList[i - 1]?.name;
+      const fileName =
+        this.fileList[i - 1]?.name && !this.fileList[i - 1]?.response
+          ? this.fileList[i - 1]?.name
+          : this.fileList[i - 1]?.response.name;
+
       if (fileName) {
         const image = await face.fetchImage(
           `http://localhost:8000/assets/Pictures/${label}/${fileName}`
