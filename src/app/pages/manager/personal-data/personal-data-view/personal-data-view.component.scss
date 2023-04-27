@@ -6,14 +6,44 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
+
+  .avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    nz-avatar {
+      margin-bottom: 16px;
+    }
+  }
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 300px;
+}
+
+.profile .action {
+  display: flex;
+  justify-content: space-between;
+
+  &.only-button {
+    justify-content: flex-end;
+  }
 }
 
 .profile.form {
-  margin: 0 32px;
-  width: 320px;
+  margin-left: 54px;
+  width: 100%;
 
   nz-form-item:last-child {
     margin-bottom: 0 !important;
+  }
+
+  nz-date-picker {
+    width: 100%;
   }
 }
 

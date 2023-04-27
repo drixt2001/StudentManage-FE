@@ -8,7 +8,12 @@ nz-select {
 
 .filter-bar {
   display: flex;
+  align-items: center;
   margin-bottom: 24px;
+
+  .button.add {
+    margin-left: auto;
+  }
 }
 
 .filter-child {

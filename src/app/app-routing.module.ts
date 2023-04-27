@@ -15,7 +15,11 @@ const routes: Routes = [
         component: PersonalDataListComponent,
       },
       {
-        path: 'canhan/:Id',
+        path: 'canhan/sua/:Id',
+        component: PersonalDataViewComponent,
+      },
+      {
+        path: 'canhan/tao',
         component: PersonalDataViewComponent,
       },
     ],

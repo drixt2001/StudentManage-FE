@@ -4,7 +4,7 @@
     Thông Tin
   </li>
 
-  <li nz-menu-item (click)="changeTab('pictures')">
+  <li *ngIf="isEdit" nz-menu-item (click)="changeTab('pictures')">
     <span nz-icon nzType="picture" nzTheme="outline"></span>
     Ảnh Cá Nhân
   </li>
@@ -13,48 +13,34 @@
 <div class="container">
   <div *ngIf="selectedTab === 'profile'" class="profile bar">
     <div class="profile content">
-      <nz-avatar [nzSize]="300" nzIcon="user"></nz-avatar>
+      <div class="profile avatar">
+        <nz-avatar [nzSize]="300" nzIcon="user"></nz-avatar>
+      </div>
 
       <form class="profile form" nz-form [nzLayout]="'vertical'">
         <nz-form-item>
-          <nz-form-label [nzSpan]="null">Mã</nz-form-label>
+          <nz-form-label [nzSpan]="null"
+            >Mã
+            {{
+              selectedRoleStudent ? "Sinh Viên" : "Giảng Viên"
+            }}</nz-form-label
+          >
           <nz-form-control [nzSpan]="null">
-            <input
-              readonly="true"
-              nz-input
-              formControlName="ID"
-              placeholder="Mã SV / Mã GV"
-            />
+            <input [readonly]="isEdit" nz-input placeholder="20K1234567" />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Họ và Tên</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <input
-              readonly="true"
-              nz-input
-              formControlName="Name"
-              placeholder="Tên SV / Tên GV"
-            />
+            <input nz-input placeholder="Nguyễn Văn A" />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Ngày Sinh</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <input
-              readonly="true"
-              nz-input
-              formControlName="Name"
-              placeholder="Ngày/Tháng/Năm"
-            />
-          </nz-form-control>
-        </nz-form-item>
-
-        <nz-form-item>
-          <nz-form-control [nzSpan]="null" [nzOffset]="null">
-            <button nz-button nzType="primary">Cập Nhật</button>
+            <nz-date-picker></nz-date-picker>
           </nz-form-control>
         </nz-form-item>
       </form>
@@ -63,45 +49,60 @@
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Khoa</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <input
-              readonly="true"
-              nz-input
-              formControlName="Name"
-              placeholder="Khoa chủ quản"
-            />
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Khoa">
+              <nz-option nzLabel="QTKD" nzValue="qtkd"></nz-option>
+              <nz-option nzLabel="KT-TC" nzValue="kttc"></nz-option>
+              <nz-option nzLabel="KTPT" nzValue="ktpt"></nz-option>
+              <nz-option nzLabel="HTTTKT" nzValue="htttkt"></nz-option>
+              <nz-option nzLabel="KTCT" nzValue="ktct"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
 
-        <nz-form-item>
+        <nz-form-item *ngIf="selectedRoleStudent">
           <nz-form-label [nzSpan]="null">Lớp</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <input
-              readonly="true"
-              nz-input
-              formControlName="Name"
-              placeholder="Lớp SV"
-            />
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Lớp">
+              <nz-option nzLabel="K53 THKT" nzValue="thkt"></nz-option>
+              <nz-option nzLabel="K53 TKKD" nzValue="tkkd"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="!selectedRoleStudent">
+          <nz-form-label [nzSpan]="null">Chức Vụ</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chức Vụ">
+              <nz-option nzLabel="Giảng Viên" nzValue="gv"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Tổng Số Ảnh</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <input
-              readonly="true"
-              nz-input
-              formControlName="Name"
-              placeholder="Số Ảnh Huấn Luyện"
-            />
+            <input [readonly]="true" nz-input placeholder="Số Ảnh Huấn Luyện" />
           </nz-form-control>
-        </nz-form-item>
-
-        <nz-form-item>
-          <nz-form-control [nzSpan]="null" [nzOffset]="null"> </nz-form-control>
         </nz-form-item>
       </form>
     </div>
+    <div class="action" [class.only-button]="isEdit">
+      <div *ngIf="!isEdit" class="profile switch">
+        <span>Giảng Viên</span>
+        <nz-switch [(ngModel)]="selectedRoleStudent"></nz-switch>
+        <span>Sinh Viên</span>
+      </div>
+      <button
+        (click)="createPerson()"
+        nzShape="round"
+        nz-button
+        nzType="primary"
+      >
+        {{ isEdit ? "Cập Nhật" : "Tạo" }}
+      </button>
+    </div>
   </div>
+
   <div *ngIf="selectedTab === 'pictures'" class="pictures bar">
     <div class="clearfix">
       <nz-upload

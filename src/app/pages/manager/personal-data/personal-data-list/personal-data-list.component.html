@@ -64,6 +64,18 @@
       <span nz-icon nzType="search"></span>
       Tìm Kiếm
     </button>
+
+    <button
+      class="button add"
+      nzShape="round"
+      nzSize="large"
+      routerLink="tao"
+      nz-button
+      nzType="primary"
+    >
+      <span nz-icon nzType="user-add" nzTheme="outline"></span>
+      Thêm
+    </button>
     <!-- Button -->
   </div>
 
@@ -92,7 +104,7 @@
           <td *ngIf="selectedRole === 'student'">{{ data.class }}</td>
           <td>{{ data.pictures }}</td>
           <td>
-            <a [routerLink]="[data.id]">Xem</a>
+            <a [routerLink]="['sua', data.id]">Xem</a>
             <nz-divider nzType="vertical"></nz-divider>
             <a>Xóa</a>
           </td>

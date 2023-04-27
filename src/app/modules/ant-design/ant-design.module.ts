@@ -16,6 +16,8 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   declarations: [],
@@ -37,6 +39,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzModalModule,
     NzSkeletonModule,
     NzSpinModule,
+    NzSwitchModule,
+    NzDatePickerModule,
   ],
   exports: [
     NzLayoutModule,
@@ -55,6 +59,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzModalModule,
     NzSkeletonModule,
     NzSpinModule,
+    NzSwitchModule,
+    NzDatePickerModule,
   ],
 })
 export class AntDesignModule {}

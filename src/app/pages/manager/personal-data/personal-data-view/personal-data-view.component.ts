@@ -5,6 +5,7 @@ import { PersonalDataViewService } from './personal-data-view.service';
 import { LoadingService } from '../../../../interceptor/loading/loading.service';
 import { map, mergeMap, of } from 'rxjs';
 import { face } from '../../../../modules/face-api/face-api';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-personal-data-view',
@@ -13,17 +14,38 @@ import { face } from '../../../../modules/face-api/face-api';
 })
 export class PersonalDataViewComponent implements OnInit {
   selectedTab: string = 'profile';
+  selectedRoleStudent = false;
   isLoadingTrainModel = false;
   dataModel: any;
   maxNumber!: number;
+  isEdit = false;
+  personId!: string;
 
   constructor(
     private service: PersonalDataViewService,
-    public loadingService: LoadingService
+    public loadingService: LoadingService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.getListPicture();
+    this.route.paramMap.subscribe((params) => {
+      this.personId = params.get('Id')!;
+    });
+    if (this.personId) {
+      this.isEdit = true;
+      this.getListPicture();
+    }
+  }
+
+  createPerson() {
+    if (this.isEdit) {
+    } else {
+      this.service
+        .createTeacher({ isTeacher: !this.selectedRoleStudent })
+        .subscribe((val) => {
+          alert(val.message);
+        });
+    }
   }
 
   changeTab(tabName: string) {
@@ -45,42 +67,32 @@ export class PersonalDataViewComponent implements OnInit {
 
   handleRemove = (file: NzUploadFile) => {
     if (file.response) {
-      return this.service.removePicture('19K4081028', file.response.name).pipe(
-        mergeMap(() => {
-          this.getListPicture();
-          return of(true);
-        })
-      );
+      return this.service
+        .removePicture(this.personId, file.response.name)
+        .pipe();
     } else {
-      return this.service.removePicture('19K4081028', file.name).pipe(
-        mergeMap(() => {
-          this.getListPicture();
-          return of(true);
-        })
-      );
+      return this.service.removePicture(this.personId, file.name).pipe();
     }
   };
 
   handleReq = (file: any) => {
     if (file.type === 'success' && file.file.response.name) {
       this.maxNumber++;
-      console.log(file);
-      console.log(this.maxNumber);
     }
   };
   async updateDataModel() {
-    this.dataModel = await this.trainingModel('19K4081028');
+    this.dataModel = await this.trainingModel(this.personId);
   }
 
   getListPicture() {
-    this.service.getPicture('19K4081028').subscribe((val) => {
+    this.service.getPicture(this.personId).subscribe((val) => {
       this.fileList = val.data;
       this.maxNumber = val.maxNumber;
     });
   }
 
   uploadDataModel() {
-    this.service.updateModel(this.dataModel, '19K4081028').subscribe((val) => {
+    this.service.updateModel(this.dataModel, this.personId).subscribe((val) => {
       alert(val.message);
       this.dataModel = undefined;
     });

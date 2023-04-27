@@ -25,4 +25,11 @@ export class PersonalDataViewService {
       { model: model }
     );
   }
+
+  createTeacher(data: any) {
+    return this.httpClient.post<any>(
+      'http://localhost:8000/personal/teacher/create',
+      data
+    );
+  }
 }
