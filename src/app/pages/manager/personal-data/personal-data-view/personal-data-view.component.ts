@@ -3,9 +3,10 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { PersonalDataViewService } from './personal-data-view.service';
 
 import { LoadingService } from '../../../../interceptor/loading/loading.service';
-import { map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of } from 'rxjs';
 import { face } from '../../../../modules/face-api/face-api';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-personal-data-view',
@@ -20,11 +21,23 @@ export class PersonalDataViewComponent implements OnInit {
   maxNumber!: number;
   isEdit = false;
   personId!: string;
+  uploadPicLink?: string;
+
+  personalForm = new FormGroup({
+    id: new FormControl(''),
+    name: new FormControl(''),
+    birthday: new FormControl(''),
+    deparment: new FormControl(''),
+    class: new FormControl(''),
+    role: new FormControl(''),
+    countPictures: new FormControl(0),
+  });
 
   constructor(
     private service: PersonalDataViewService,
     public loadingService: LoadingService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +47,7 @@ export class PersonalDataViewComponent implements OnInit {
     if (this.personId) {
       this.isEdit = true;
       this.getListPicture();
+      this.uploadPicLink = `http://localhost:8000/personal/upload/${this.personId}`;
     }
   }
 
@@ -41,9 +55,22 @@ export class PersonalDataViewComponent implements OnInit {
     if (this.isEdit) {
     } else {
       this.service
-        .createTeacher({ isTeacher: !this.selectedRoleStudent })
+        .createTeacher({
+          isTeacher: !this.selectedRoleStudent,
+          ...this.personalForm.value,
+        })
+        .pipe(
+          catchError((e) => {
+            alert(e.error.message);
+            return of();
+          })
+        )
         .subscribe((val) => {
           alert(val.message);
+          this.router.navigate([
+            '/admin/canhan/sua/',
+            this.personalForm.get('id')?.value,
+          ]);
         });
     }
   }

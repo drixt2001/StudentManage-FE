@@ -17,7 +17,12 @@
         <nz-avatar [nzSize]="300" nzIcon="user"></nz-avatar>
       </div>
 
-      <form class="profile form" nz-form [nzLayout]="'vertical'">
+      <form
+        [formGroup]="personalForm"
+        class="profile form"
+        nz-form
+        [nzLayout]="'vertical'"
+      >
         <nz-form-item>
           <nz-form-label [nzSpan]="null"
             >Mã
@@ -26,30 +31,45 @@
             }}</nz-form-label
           >
           <nz-form-control [nzSpan]="null">
-            <input [readonly]="isEdit" nz-input placeholder="20K1234567" />
+            <input
+              formControlName="id"
+              [readonly]="isEdit"
+              nz-input
+              placeholder="20K1234567"
+            />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Họ và Tên</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <input nz-input placeholder="Nguyễn Văn A" />
+            <input formControlName="name" nz-input placeholder="Nguyễn Văn A" />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Ngày Sinh</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <nz-date-picker></nz-date-picker>
+            <nz-date-picker formControlName="birthday"></nz-date-picker>
           </nz-form-control>
         </nz-form-item>
       </form>
 
-      <form class="profile form" nz-form [nzLayout]="'vertical'">
+      <form
+        [formGroup]="personalForm"
+        class="profile form"
+        nz-form
+        [nzLayout]="'vertical'"
+      >
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Khoa</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Khoa">
+            <nz-select
+              formControlName="deparment"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Khoa"
+            >
               <nz-option nzLabel="QTKD" nzValue="qtkd"></nz-option>
               <nz-option nzLabel="KT-TC" nzValue="kttc"></nz-option>
               <nz-option nzLabel="KTPT" nzValue="ktpt"></nz-option>
@@ -62,7 +82,12 @@
         <nz-form-item *ngIf="selectedRoleStudent">
           <nz-form-label [nzSpan]="null">Lớp</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Lớp">
+            <nz-select
+              formControlName="class"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Lớp"
+            >
               <nz-option nzLabel="K53 THKT" nzValue="thkt"></nz-option>
               <nz-option nzLabel="K53 TKKD" nzValue="tkkd"></nz-option>
             </nz-select>
@@ -72,7 +97,12 @@
         <nz-form-item *ngIf="!selectedRoleStudent">
           <nz-form-label [nzSpan]="null">Chức Vụ</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chức Vụ">
+            <nz-select
+              formControlName="role"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Chức Vụ"
+            >
               <nz-option nzLabel="Giảng Viên" nzValue="gv"></nz-option>
             </nz-select>
           </nz-form-control>
@@ -81,7 +111,12 @@
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Tổng Số Ảnh</nz-form-label>
           <nz-form-control [nzSpan]="null">
-            <input [readonly]="true" nz-input placeholder="Số Ảnh Huấn Luyện" />
+            <input
+              formControlName="countPictures"
+              [readonly]="true"
+              nz-input
+              placeholder="Số Ảnh Huấn Luyện"
+            />
           </nz-form-control>
         </nz-form-item>
       </form>
@@ -108,7 +143,7 @@
       <nz-upload
         [nzFileType]="'image/png,image/jpeg'"
         [nzMultiple]="true"
-        nzAction="http://localhost:8000/personal/upload/19K4081028"
+        [nzAction]="uploadPicLink"
         nzListType="picture-card"
         [(nzFileList)]="fileList"
         [nzShowButton]="fileList.length < 8"

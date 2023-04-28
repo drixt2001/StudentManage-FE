@@ -4,50 +4,103 @@ import {
   Component,
   DoCheck,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import * as faceapi from 'face-api.js';
-import { catchError, map } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import * as fs from 'fs';
 import * as path from 'path';
+import { face } from '../../modules/face-api/face-api';
 @Component({
   selector: 'app-face-recognition',
   templateUrl: './face-recognition.component.html',
   styleUrls: ['./face-recognition.component.scss'],
 })
-export class FaceRecognitionComponent implements OnInit, AfterViewInit {
-  srcObject!: MediaStream;
-  enableCamera = false;
+export class FaceRecognitionComponent
+  implements OnInit, AfterViewInit, DoCheck, OnDestroy
+{
+  srcObject?: MediaStream;
+  enableCamera = true;
   hasPlaying = false;
   created = false;
+  init = false;
   video!: HTMLVideoElement;
   faceMatcher!: any;
   userLabels: string[] = [];
   trainingData: any[] = [];
   isLoading = true;
+  faceDescriptors: any[] = [];
 
   constructor(private httpClient: HttpClient) {}
 
-  ngOnInit(): void {
-    const modalServer = this.loadModalFromServer();
-
-    this.getFaceAPI().finally(async () => {
-      if (modalServer.length) {
-        console.log('run');
-        this.trainingData = modalServer;
-        this.faceMatcher = new faceapi.FaceMatcher(this.trainingData, 0.6);
-        this.getCamera();
-        this.create();
-      } else {
-        await this.trainingModal().finally(() => {
-          console.log('train');
-          this.faceMatcher = new faceapi.FaceMatcher(this.trainingData, 0.6);
-          this.getCamera();
-          this.create();
-        });
+  ngOnDestroy(): void {
+    this.enableCamera = false;
+    this.srcObject?.getTracks().forEach(function (track) {
+      if (track.readyState == 'live' && track.kind === 'video') {
+        track.stop();
       }
     });
+  }
+
+  ngDoCheck(): void {
+    this.getFaceAPI().subscribe((init) => {
+      if (init && !this.init) {
+        this.httpClient
+          .get<any[]>('http://localhost:8000/personal/model/all')
+          .subscribe((faceDescriptors) => {
+            this.faceDescriptors = this.convertData(faceDescriptors);
+            this.faceMatcher = new faceapi.FaceMatcher(
+              this.faceDescriptors,
+              0.6
+            );
+            this.create();
+          });
+        this.init = true;
+      }
+    });
+  }
+
+  convertData(faceDescriptors: any) {
+    const faceDescriptorsArray = [];
+    for (let i = 0; i < faceDescriptors.length; i++) {
+      for (let j = 0; j < faceDescriptors[i].descriptors.length; j++) {
+        faceDescriptors[i].descriptors[j] = new Float32Array(
+          Object.values(faceDescriptors[i].descriptors[j])
+        );
+      }
+
+      faceDescriptorsArray.push(
+        new face.LabeledFaceDescriptors(
+          faceDescriptors[i].label,
+          faceDescriptors[i].descriptors
+        )
+      );
+    }
+    return faceDescriptorsArray;
+  }
+  ngOnInit(): void {
+    this.getCamera();
+    // modalServer.finally(() => {
+    //   console.log();
+    // });
+    // this.getFaceAPI().finally(async () => {
+    //   if (this.serverFaceDescriptors.length) {
+    //     console.log('run', this.serverFaceDescriptors.length);
+    //     this.trainingData = this.serverFaceDescriptors;
+    //     this.faceMatcher = new faceapi.FaceMatcher(this.trainingData, 0.6);
+    //     this.getCamera();
+    //     this.create();
+    //   } else {
+    //     // await this.trainingModal().finally(() => {
+    //     //   console.log('train');
+    //     //   this.faceMatcher = new faceapi.FaceMatcher(this.trainingData, 0.6);
+    //     //   this.getCamera();
+    //     //   this.create();
+    //     // });
+    //   }
+    // });
   }
 
   ngAfterViewInit(): void {
@@ -90,35 +143,41 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  loadModalFromServer() {
-    const serverFaceDescriptors: any[] = [];
-
-    this.httpClient
-      .get<any[]>('http://localhost:8000/api')
-      .subscribe(async (faceDescriptors) => {
-        for (let i = 0; i < faceDescriptors.length; i++) {
-          for (let j = 0; j < faceDescriptors[i].descriptors.length; j++) {
-            faceDescriptors[i].descriptors[j] = new Float32Array(
-              Object.values(faceDescriptors[i].descriptors[j])
-            );
-          }
-          serverFaceDescriptors.push(
-            new faceapi.LabeledFaceDescriptors(
-              faceDescriptors[i].label,
-              faceDescriptors[i].descriptors
-            )
-          );
-        }
-      });
-    return serverFaceDescriptors;
+  async loadModalFromServer() {
+    // await this.httpClient
+    //   .get<any[]>('http://localhost:8000/personal/model/all')
+    //   .subscribe(async (faceDescriptors) => {
+    //     for (let i = 0; i < faceDescriptors.length; i++) {
+    //       for (let j = 0; j < faceDescriptors[i].descriptors.length; j++) {
+    //         faceDescriptors[i].descriptors[j] = new Float32Array(
+    //           Object.values(faceDescriptors[i].descriptors[j])
+    //         );
+    //       }
+    //       await this.serverFaceDescriptors.push(
+    //         new face.LabeledFaceDescriptors(
+    //           faceDescriptors[i].label,
+    //           faceDescriptors[i].descriptors
+    //         )
+    //       );
+    //     }
+    //   });
+    // this.init = true;
   }
 
-  async getFaceAPI() {
-    await faceapi.nets.faceLandmark68Net.loadFromUri('/assets/models');
-    await faceapi.nets.faceExpressionNet.loadFromUri('/assets/models');
-    await faceapi.nets.faceRecognitionNet.loadFromUri('/assets/models');
-    await faceapi.nets.tinyFaceDetector.loadFromUri('/assets/models');
-    await faceapi.nets.ssdMobilenetv1.loadFromUri('/assets/models');
+  getFaceAPI(): Observable<boolean> {
+    return of(
+      face.nets.faceLandmark68Net.isLoaded &&
+        face.nets.faceExpressionNet.isLoaded &&
+        face.nets.faceRecognitionNet.isLoaded &&
+        face.nets.tinyFaceDetector.isLoaded &&
+        face.nets.ssdMobilenetv1.isLoaded
+    );
+
+    // await faceapi.nets.faceLandmark68Net.loadFromUri('/assets/models');
+    // await faceapi.nets.faceExpressionNet.loadFromUri('/assets/models');
+    // await faceapi.nets.faceRecognitionNet.loadFromUri('/assets/models');
+    // await faceapi.nets.tinyFaceDetector.loadFromUri('/assets/models');
+    // await faceapi.nets.ssdMobilenetv1.loadFromUri('/assets/models');
   }
 
   async getCamera(): Promise<void> {
@@ -162,7 +221,7 @@ export class FaceRecognitionComponent implements OnInit, AfterViewInit {
           });
           drawBox.draw(canvas);
         }
-      }, 100);
+      }, 300);
     });
   }
 
