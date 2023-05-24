@@ -1,8 +1,8 @@
 <div id="container" class="container">
   <video
     *ngIf="enableCamera"
-    width="500"
-    height="500"
+    width="50%"
+    height="50%"
     id="video"
     class="video"
     #video
@@ -10,4 +10,10 @@
     src=""
     [srcObject]="srcObject"
   ></video>
+
+  <div class="update-list">
+    <ul>
+      <li>ok</li>
+    </ul>
+  </div>
 </div>

@@ -2,12 +2,7 @@
   <div class="filter-bar">
     <!-- Doi tuong -->
     <div class="filter-child">
-      <nz-select
-        nzShowSearch
-        nzAllowClear
-        nzPlaceHolder="Chọn Đối Tượng"
-        [(ngModel)]="selectedRole"
-      >
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn Đối Tượng" [(ngModel)]="selectedRole">
         <nz-option nzLabel="Giảng Viên" nzValue="teacher"></nz-option>
         <nz-option nzLabel="Sinh Viên" nzValue="student"></nz-option>
       </nz-select>
@@ -16,12 +11,7 @@
 
     <!-- Khoa -->
     <div class="filter-child">
-      <nz-select
-        nzShowSearch
-        nzAllowClear
-        nzPlaceHolder="Khoa"
-        [(ngModel)]="selectedDepartment"
-      >
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Khoa" [(ngModel)]="selectedDepartment">
         <nz-option nzLabel="QTKD" nzValue="qtkd"></nz-option>
         <nz-option nzLabel="KT-TC" nzValue="kttc"></nz-option>
         <nz-option nzLabel="KTPT" nzValue="ktpt"></nz-option>
@@ -32,16 +22,8 @@
     <!-- Khoa -->
 
     <!-- Lop -->
-    <div
-      class="filter-child"
-      *ngIf="selectedRole === 'student' && !!selectedDepartment"
-    >
-      <nz-select
-        nzShowSearch
-        nzAllowClear
-        nzPlaceHolder="Lớp"
-        [(ngModel)]="selectedClass"
-      >
+    <div class="filter-child" *ngIf="selectedRole === 'student' && !!selectedDepartment">
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Lớp" [(ngModel)]="selectedClass">
         <nz-option nzLabel="K53 THKT" nzValue="thkt"></nz-option>
         <nz-option nzLabel="K53 TKKD" nzValue="tkkd"></nz-option>
       </nz-select>
@@ -50,29 +32,17 @@
 
     <!-- Ten -->
     <div class="filter-child">
-      <input
-        class="name"
-        nz-input
-        placeholder="Tìm Theo Tên"
-        [(ngModel)]="nameValue"
-      />
+      <input class="name" nz-input placeholder="Tìm Theo Tên" [(ngModel)]="nameValue" />
     </div>
     <!-- Ten -->
 
     <!-- Button -->
-    <button (click)="search()" nz-button nzType="primary">
+    <button routerLink="/face-recognition" nz-button nzType="primary">
       <span nz-icon nzType="search"></span>
       Tìm Kiếm
     </button>
 
-    <button
-      class="button add"
-      nzShape="round"
-      nzSize="large"
-      routerLink="tao"
-      nz-button
-      nzType="primary"
-    >
+    <button class="button add" nzShape="round" nzSize="large" routerLink="tao" nz-button nzType="primary">
       <span nz-icon nzType="user-add" nzTheme="outline"></span>
       Thêm
     </button>

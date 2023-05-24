@@ -6,11 +6,11 @@
 
 #container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
 #video {
-  opacity: 0.1;
+  opacity: 1;
   border: 1px solid cadetblue;
 }

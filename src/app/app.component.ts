@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { face } from './modules/face-api/face-api';
+import { check, face } from './modules/face-api/face-api';
 
 @Component({
   selector: 'app-root',
@@ -19,5 +19,6 @@ export class AppComponent implements OnInit {
     await face.nets.faceRecognitionNet.loadFromUri('/assets/models');
     await face.nets.tinyFaceDetector.loadFromUri('/assets/models');
     await face.nets.ssdMobilenetv1.loadFromUri('/assets/models');
+    check.loadFaceApi = true;
   }
 }
