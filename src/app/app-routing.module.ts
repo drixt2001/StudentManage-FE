@@ -4,11 +4,14 @@ import { FaceRecognitionComponent } from './pages/face-recognition/face-recognit
 import { AppModule } from './app.module';
 import { PersonalDataListComponent } from './pages/manager/personal-data/personal-data-list/personal-data-list.component';
 import { PersonalDataViewComponent } from './pages/manager/personal-data/personal-data-view/personal-data-view.component';
+import { LoginComponent } from './pages/auth/login/login.component';
+import { ManagerComponent } from './pages/manager/manager.component';
 
 const routes: Routes = [
   { path: 'face-recognition', component: FaceRecognitionComponent },
   {
-    path: 'admin',
+    path: 'quanly',
+    component: ManagerComponent,
     children: [
       {
         path: 'canhan',
@@ -24,6 +27,12 @@ const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login', pathMatch: 'full' },
 ];
 
 @NgModule({
