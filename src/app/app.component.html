@@ -1,19 +1,2 @@
-<nz-layout class="layout">
-  <nz-header>
-    <div class="logo">HCE Điểm Danh</div>
-    <ul nz-menu nzTheme="dark" nzMode="horizontal">
-      <li nz-menu-item routerLink="admin/canhan">Dữ Liệu Cá Nhân</li>
-      <li nz-menu-item routerLink="face-recognition">Quét</li>
-    </ul>
-  </nz-header>
-  <nz-content>
-    <nz-breadcrumb nz-page-header-breadcrumb>
-      <nz-breadcrumb-item>
-        <a routerLink="/">Trang Chủ</a>
-      </nz-breadcrumb-item>
-    </nz-breadcrumb>
-    <div class="inner-content"><router-outlet></router-outlet></div>
-  </nz-content>
-  <nz-footer>HCE ©2023 Ứng Dụng Quản Lý Người Học</nz-footer>
-</nz-layout>
+<router-outlet></router-outlet>
 <app-loading></app-loading>

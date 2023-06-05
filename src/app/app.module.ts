@@ -16,6 +16,7 @@ import { PersonalDataListModule } from './pages/manager/personal-data/personal-d
 import { PersonalDataViewModule } from './pages/manager/personal-data/personal-data-view/personal-data-view.module';
 import { LoadingModule } from './components/loading/loading.module';
 import { LoadingInterceptor } from './interceptor/loading/loading.interceptor';
+import { ManagerModule } from './pages/manager/manager.module';
 
 registerLocaleData(vi);
 
@@ -33,6 +34,7 @@ registerLocaleData(vi);
 
     // page
     LoadingModule,
+    ManagerModule,
     FaceRecognitionModule,
     PersonalDataListModule,
     PersonalDataViewModule,
