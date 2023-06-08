@@ -1,8 +1,8 @@
 <div id="container" class="container">
   <video
     *ngIf="enableCamera"
-    width="50%"
-    height="50%"
+    width="500px"
+    height="500px"
     id="video"
     class="video"
     #video
@@ -11,9 +11,11 @@
     [srcObject]="srcObject"
   ></video>
 
-  <div class="update-list">
-    <ul>
-      <li>ok</li>
-    </ul>
+  <div class="list-update">
+    <span *ngFor="let list of listUpdate">
+      <span>{{ list.id }}</span>
+      <span> Tham gia vào: {{ list.date }}</span>
+      <br />
+    </span>
   </div>
 </div>

@@ -68,7 +68,7 @@ export class PersonalDataViewComponent implements OnInit {
         .subscribe((val) => {
           alert(val.message);
           this.router.navigate([
-            '/admin/canhan/sua/',
+            '/quanly/canhan/sua/',
             this.personalForm.get('id')?.value,
           ]);
         });

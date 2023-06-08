@@ -18,7 +18,7 @@ export class PersonalDataListComponent implements OnInit {
     this.personalData = [
       {
         id: '19K4081028',
-        name: 'Thang Le Dinh',
+        name: 'Test',
         birthday: '29/10/2001',
         department: 'HTTTKT',
         class: 'K53 THKT',
