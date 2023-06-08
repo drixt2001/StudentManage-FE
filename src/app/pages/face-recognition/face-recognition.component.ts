@@ -13,6 +13,7 @@ import { Observable, catchError, map, of } from 'rxjs';
 import * as fs from 'fs';
 import * as path from 'path';
 import { face } from '../../modules/face-api/face-api';
+import * as dayjs from 'dayjs';
 import { host } from '../../config/host';
 @Component({
   selector: 'app-face-recognition',
@@ -33,6 +34,7 @@ export class FaceRecognitionComponent
   trainingData: any[] = [];
   isLoading = true;
   faceDescriptors: any[] = [];
+  listUpdate: any[] = [];
 
   constructor(private httpClient: HttpClient) {}
 
@@ -215,14 +217,29 @@ export class FaceRecognitionComponent
         faceapi.draw.drawFaceExpressions(canvas, resize);
 
         for (const detection of resize) {
+          const label = this.faceMatcher
+            .findBestMatch(detection.descriptor)
+            .toString();
+
+          if (
+            label.substring(0, 7) !== 'unknown' &&
+            !this.listUpdate
+              .map((val) => val.id)
+              .includes(label.substring(0, 10))
+          ) {
+            this.listUpdate.push({
+              id: label.substring(0, 10),
+              date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
+            });
+            console.log(label);
+          }
+
           const drawBox = new faceapi.draw.DrawBox(detection.detection.box, {
-            label: this.faceMatcher
-              .findBestMatch(detection.descriptor)
-              .toString(),
+            label: label,
           });
           drawBox.draw(canvas);
         }
-      }, 300);
+      }, 500);
     });
   }
 
