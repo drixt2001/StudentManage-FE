@@ -7,6 +7,7 @@ import { catchError, map, mergeMap, of } from 'rxjs';
 import { face } from '../../../../modules/face-api/face-api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
+import { host } from '../../../../config/host';
 
 @Component({
   selector: 'app-personal-data-view',
@@ -47,7 +48,7 @@ export class PersonalDataViewComponent implements OnInit {
     if (this.personId) {
       this.isEdit = true;
       this.getListPicture();
-      this.uploadPicLink = `http://localhost:8000/personal/upload/${this.personId}`;
+      this.uploadPicLink = `${host}/personal/upload/${this.personId}`;
     }
   }
 
@@ -140,7 +141,7 @@ export class PersonalDataViewComponent implements OnInit {
 
       if (fileName) {
         const image = await face.fetchImage(
-          `http://localhost:8000/assets/Pictures/${label}/${fileName}`
+          `${host}/assets/Pictures/${label}/${fileName}`
         );
         const detection = await face
           .detectSingleFace(image)

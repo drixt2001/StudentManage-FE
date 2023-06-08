@@ -13,6 +13,7 @@ import { Observable, catchError, map, of } from 'rxjs';
 import * as fs from 'fs';
 import * as path from 'path';
 import { face } from '../../modules/face-api/face-api';
+import { host } from '../../config/host';
 @Component({
   selector: 'app-face-recognition',
   templateUrl: './face-recognition.component.html',
@@ -48,7 +49,7 @@ export class FaceRecognitionComponent
     this.getFaceAPI().subscribe((init) => {
       if (init && !this.init) {
         this.httpClient
-          .get<any[]>('http://localhost:8000/personal/model/all')
+          .get<any[]>(`${host}/personal/model/all`)
           .subscribe((faceDescriptors) => {
             this.faceDescriptors = this.convertData(faceDescriptors);
             this.faceMatcher = new faceapi.FaceMatcher(
@@ -139,7 +140,7 @@ export class FaceRecognitionComponent
 
   updateModalToServer() {
     this.httpClient
-      .post('http://localhost:8000/api', { data: this.trainingData })
+      .post(`${host}/api`, { data: this.trainingData })
       .subscribe();
   }
 
