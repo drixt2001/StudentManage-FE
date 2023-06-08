@@ -17,6 +17,8 @@ import { PersonalDataViewModule } from './pages/manager/personal-data/personal-d
 import { LoadingModule } from './components/loading/loading.module';
 import { LoadingInterceptor } from './interceptor/loading/loading.interceptor';
 import { ManagerModule } from './pages/manager/manager.module';
+import { LoginModule } from './pages/auth/login/login.module';
+import { ApiInterceptor } from './interceptor/api/api.interceptor';
 
 registerLocaleData(vi);
 
@@ -33,6 +35,7 @@ registerLocaleData(vi);
     AntDesignModule,
 
     // page
+    LoginModule,
     LoadingModule,
     ManagerModule,
     FaceRecognitionModule,
@@ -42,6 +45,7 @@ registerLocaleData(vi);
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })
