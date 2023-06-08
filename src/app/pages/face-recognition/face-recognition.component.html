@@ -1,0 +1,19 @@
+<div id="container" class="container">
+  <video
+    *ngIf="enableCamera"
+    width="50%"
+    height="50%"
+    id="video"
+    class="video"
+    #video
+    autoplay="true"
+    src=""
+    [srcObject]="srcObject"
+  ></video>
+
+  <div class="update-list">
+    <ul>
+      <li>ok</li>
+    </ul>
+  </div>
+</div>

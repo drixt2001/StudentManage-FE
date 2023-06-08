@@ -1,0 +1,16 @@
+::ng-deep {
+  #canvas {
+    position: absolute;
+  }
+}
+
+#container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#video {
+  opacity: 1;
+  border: 1px solid cadetblue;
+}
