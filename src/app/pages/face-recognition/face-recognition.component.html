@@ -1,21 +1,84 @@
-<div id="container" class="container">
-  <video
-    *ngIf="enableCamera"
-    width="500px"
-    height="500px"
-    id="video"
-    class="video"
-    #video
-    autoplay="true"
-    src=""
-    [srcObject]="srcObject"
-  ></video>
+<nz-layout class="layout">
+  <nz-sider
+    [ngStyle]="{
+      overflow: 'auto',
+      height: '100vh',
+      position: 'sticky',
+      top: 0,
+      left: 0
+    }"
+    #sider
+    nzTheme="light"
+    nzWidth="25%"
+  >
+    <div class="flex top">
+      <div class="control-bar"></div>
+      <div class="button-bar">
+        <button routerLink="/quanly" nz-button>
+          <span nz-icon nzType="left"></span>
+          Trang Chủ
+        </button>
 
-  <div class="list-update">
-    <span *ngFor="let list of listUpdate">
-      <span>{{ list.id }}</span>
-      <span> Tham gia vào: {{ list.date }}</span>
-      <br />
-    </span>
-  </div>
-</div>
+        <button
+          (click)="toggleCam()"
+          nz-button
+          nzType="primary"
+          nzShape="round"
+          [disabled]="!readyEnableCamera"
+          *ngIf="!enableCamera"
+        >
+          <span nz-icon nzType="video-camera" nzTheme="outline"></span>
+          <span>Bắt Đầu Điểm Danh</span>
+        </button>
+
+        <button
+          (click)="toggleCam()"
+          nz-button
+          nzDanger
+          nzType="primary"
+          nzShape="round"
+          *ngIf="enableCamera"
+        >
+          <span nz-icon nzType="video-camera" nzTheme="outline"></span>
+          <span>Dừng Điểm Danh</span>
+        </button>
+      </div>
+    </div>
+  </nz-sider>
+  <nz-layout class="right-layout">
+    <nz-content>
+      <div class="inner-content">
+        <div id="video-container" class="video-container">
+          <h2 *ngIf="!enableCamera" nz-typography>
+            Thiết lập và bật chế độ điểm danh
+          </h2>
+          <video
+            *ngIf="enableCamera"
+            id="video"
+            class="video"
+            #video
+            autoplay="true"
+            src=""
+            [srcObject]="srcObject"
+          ></video>
+        </div>
+
+        <nz-tabset style="height: 100%; width: 30%; padding: 0 20px">
+          <nz-tab [nzTitle]="titleTemplate">
+            <ng-template #titleTemplate>
+              <span nz-icon nzType="pie-chart"></span>
+              Cập Nhật
+            </ng-template>
+            <div class="list-update">
+              <span *ngFor="let list of listUpdate">
+                <span>{{ list.id }}</span>
+                <span> Tham gia vào: {{ list.date }}</span>
+                <br />
+              </span>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
