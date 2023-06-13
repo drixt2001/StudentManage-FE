@@ -8,7 +8,7 @@
         <form nz-form class="login-form" (ngSubmit)="Login()">
           <h3 style="color: cadetBlue">Thông Tin Đăng Nhập</h3>
           <nz-form-item class="input email">
-            <nz-form-control nzErrorTip="Please input your username!">
+            <nz-form-control nzErrorTip="Vui lòng nhập đúng định dạng Email!">
               <nz-input-group nzPrefixIcon="user">
                 <input
                   [formControl]="emailFormControl"
@@ -19,7 +19,7 @@
             </nz-form-control>
           </nz-form-item>
           <nz-form-item class="input password">
-            <nz-form-control nzErrorTip="Please input your Password!">
+            <nz-form-control nzErrorTip="Mật khẩu cần có tối thiểu 6 ký tự!">
               <nz-input-group nzPrefixIcon="lock">
                 <input
                   nzSize="large"

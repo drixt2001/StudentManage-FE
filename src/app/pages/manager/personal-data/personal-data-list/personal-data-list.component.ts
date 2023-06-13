@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { PersonalDataService } from '../personal-data.service';
+import * as dayjs from 'dayjs';
 
 @Component({
   selector: 'app-personal-data-list',
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./personal-data-list.component.scss'],
 })
 export class PersonalDataListComponent implements OnInit {
+  constructor(private personalDataService: PersonalDataService) {}
+
   selectedRole!: string;
   selectedDepartment!: string;
   selectedClass!: string;
@@ -15,20 +19,23 @@ export class PersonalDataListComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedRole = 'teacher';
-    this.personalData = [
-      {
-        id: '19K4081028',
-        name: 'Test',
-        birthday: '29/10/2001',
-        department: 'HTTTKT',
-        class: 'K53 THKT',
-        pictures: 4,
-      },
-    ];
   }
 
   search() {
-    const data = `Doi tuong: ${this.selectedRole} - Khoa: ${this.selectedDepartment} - Lop: ${this.selectedClass} - Ten: ${this.nameValue}`;
-    alert(data);
+    this.getData();
+  }
+
+  convertDate(date: string) {
+    return dayjs(date).format('DD/MM/YYYY');
+  }
+
+  getData() {
+    this.personalDataService.getList(this.selectedRole).subscribe((res) => {
+      this.personalData = res.data;
+    });
+  }
+
+  setData() {
+    this.personalData = [];
   }
 }

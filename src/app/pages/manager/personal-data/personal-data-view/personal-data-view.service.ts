@@ -24,7 +24,10 @@ export class PersonalDataViewService {
     });
   }
 
-  createTeacher(data: any) {
-    return this.httpClient.post<any>(`${host}/personal/teacher/create`, data);
+  create(type: string, data: any) {
+    return this.httpClient.post<any>(`${host}/personal/create`, {
+      type: type,
+      data: data,
+    });
   }
 }

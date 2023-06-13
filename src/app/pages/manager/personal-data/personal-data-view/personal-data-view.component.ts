@@ -55,9 +55,9 @@ export class PersonalDataViewComponent implements OnInit {
   createPerson() {
     if (this.isEdit) {
     } else {
+      const type = this.selectedRoleStudent ? 'student' : 'teacher';
       this.service
-        .createTeacher({
-          isTeacher: !this.selectedRoleStudent,
+        .create(type, {
           ...this.personalForm.value,
         })
         .pipe(
