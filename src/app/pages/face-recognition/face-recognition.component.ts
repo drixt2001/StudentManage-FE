@@ -32,13 +32,20 @@ export class FaceRecognitionComponent
   isLoading = true;
   faceDescriptors: any[] = [];
   listUpdate: any[] = [];
+  hasJoinList: any[] = [];
 
+  timeRepeatCheck = 1;
+  timenow: string = dayjs(Date.now()).format('HH:mm:ss DD/MM/YYYY');
+  timeInterval = setInterval(() => {
+    this.timenow = dayjs(Date.now()).format('HH:mm:ss DD/MM/YYYY');
+  }, 1000);
   constructor(private httpClient: HttpClient, private toast: ToastService) {}
 
   ngOnDestroy(): void {
     this.stopCam();
     document.getElementById('canvas')?.remove();
     clearInterval(this.canvasInterval);
+    clearInterval(this.timeInterval);
     this.video = undefined;
   }
 
@@ -169,7 +176,30 @@ export class FaceRecognitionComponent
               this.listUpdate.push({
                 id: label.substring(0, 10),
                 date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
+                originDate: Date.now(),
               });
+              this.hasJoinList.push(label.substring(0, 10));
+            }
+
+            if (
+              label.substring(0, 7) !== 'unknown' &&
+              this.hasJoinList.includes(label.substring(0, 10))
+            ) {
+              const index = [...this.listUpdate]
+                .reverse()
+                .find((val) => (val.id = label.substring(0, 10)));
+
+              if (
+                Date.now() - index.originDate >
+                this.timeRepeatCheck * 60 * 1000
+              ) {
+                this.listUpdate.push({
+                  id: label.substring(0, 10),
+                  date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
+                  originDate: Date.now(),
+                  notFirst: true,
+                });
+              }
             }
 
             const drawBox = new faceapi.draw.DrawBox(detection.detection.box, {

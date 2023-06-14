@@ -65,16 +65,16 @@
           <nz-form-label [nzSpan]="null">Khoa</nz-form-label>
           <nz-form-control [nzSpan]="null">
             <nz-select
-              formControlName="deparment"
+              formControlName="department"
               nzShowSearch
               nzAllowClear
               nzPlaceHolder="Khoa"
             >
-              <nz-option nzLabel="QTKD" nzValue="1"></nz-option>
-              <nz-option nzLabel="KT-TC" nzValue="2"></nz-option>
-              <nz-option nzLabel="KTPT" nzValue="3"></nz-option>
-              <nz-option nzLabel="HTTTKT" nzValue="4"></nz-option>
-              <nz-option nzLabel="KTCT" nzValue="5"></nz-option>
+              <nz-option nzLabel="QTKD" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="KT-TC" [nzValue]="2"></nz-option>
+              <nz-option nzLabel="KTPT" [nzValue]="3"></nz-option>
+              <nz-option nzLabel="HTTTKT" [nzValue]="4"></nz-option>
+              <nz-option nzLabel="KTCT" [nzValue]="5"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -88,8 +88,8 @@
               nzAllowClear
               nzPlaceHolder="Lớp"
             >
-              <nz-option nzLabel="K53 THKT" nzValue="1"></nz-option>
-              <nz-option nzLabel="K53 TKKD" nzValue="2"></nz-option>
+              <nz-option nzLabel="K53 THKT" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="K53 TKKD" [nzValue]="2"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>

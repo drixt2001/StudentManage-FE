@@ -8,6 +8,8 @@ import { face } from '../../../../modules/face-api/face-api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { host } from '../../../../config/host';
+import { PersonalDataService } from '../personal-data.service';
+import { ToastService } from 'src/app/components/toast/toast.service';
 
 @Component({
   selector: 'app-personal-data-view',
@@ -28,17 +30,19 @@ export class PersonalDataViewComponent implements OnInit {
     id: new FormControl(''),
     name: new FormControl(''),
     birthday: new FormControl(''),
-    deparment: new FormControl(''),
-    class: new FormControl(''),
+    department: new FormControl(0),
+    class: new FormControl(0),
     role: new FormControl(''),
     countPictures: new FormControl(0),
   });
 
   constructor(
     private service: PersonalDataViewService,
+    private personalService: PersonalDataService,
     public loadingService: LoadingService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +51,9 @@ export class PersonalDataViewComponent implements OnInit {
     });
     if (this.personId) {
       this.isEdit = true;
+      this.selectedRoleStudent = this.personId.charAt(2) === 'K' ? true : false;
       this.getListPicture();
+      this.getDetailData();
       this.uploadPicLink = `${host}/personal/upload/${this.personId}`;
     }
   }
@@ -62,12 +68,12 @@ export class PersonalDataViewComponent implements OnInit {
         })
         .pipe(
           catchError((e) => {
-            alert(e.error.message);
+            this.toast.open(e.error.message, 'error');
             return of();
           })
         )
         .subscribe((val) => {
-          alert(val.message);
+          this.toast.open(val.message, 'success');
           this.router.navigate([
             '/quanly/canhan/sua/',
             this.personalForm.get('id')?.value,
@@ -119,9 +125,16 @@ export class PersonalDataViewComponent implements OnInit {
     });
   }
 
+  getDetailData() {
+    const type = this.selectedRoleStudent ? 'student' : 'teacher';
+    this.personalService.getDetail(type, this.personId).subscribe((val) => {
+      const data = { ...val.data, countPictures: this.maxNumber };
+      this.personalForm.patchValue(data);
+    });
+  }
   uploadDataModel() {
     this.service.updateModel(this.dataModel, this.personId).subscribe((val) => {
-      alert(val.message);
+      this.toast.open(val.message, 'success');
       this.dataModel = undefined;
     });
   }

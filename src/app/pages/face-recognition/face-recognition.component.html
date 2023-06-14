@@ -12,9 +12,30 @@
     nzWidth="25%"
   >
     <div class="flex top">
-      <div class="control-bar"></div>
+      <div class="control-bar">
+        <div class="time-now">
+          <nz-statistic
+            [nzValue]="timenow"
+            [nzTitle]="'Thời Gian Hiện Tại'"
+          ></nz-statistic>
+        </div>
+        <form nz-form>
+          <nz-form-item>
+            <nz-form-label nzFor="email"
+              >Số phút lặp lại kiểm tra</nz-form-label
+            >
+            <nz-input-number
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="timeRepeatCheck"
+              [nzMin]="1"
+              [nzMax]="20"
+              [nzStep]="1"
+            ></nz-input-number>
+          </nz-form-item>
+        </form>
+      </div>
       <div class="button-bar">
-        <button routerLink="/quanly" nz-button>
+        <button routerLink="/quanly/canhan" nz-button>
           <span nz-icon nzType="left"></span>
           Trang Chủ
         </button>
@@ -49,7 +70,13 @@
     <nz-content>
       <div class="inner-content">
         <div id="video-container" class="video-container">
-          <h2 *ngIf="!enableCamera" nz-typography>
+          <h2 class="setup-title" *ngIf="!enableCamera" nz-typography>
+            <span
+              class="icon"
+              nz-icon
+              nzType="video-camera-add"
+              nzTheme="outline"
+            ></span>
             Thiết lập và bật chế độ điểm danh
           </h2>
           <video
@@ -70,9 +97,14 @@
               Cập Nhật
             </ng-template>
             <div class="list-update">
-              <span *ngFor="let list of listUpdate">
-                <span>{{ list.id }}</span>
-                <span> Tham gia vào: {{ list.date }}</span>
+              <span class="item-update" *ngFor="let list of listUpdate">
+                <span>
+                  <nz-tag [nzColor]="'#2db7f5'">{{ list.id }}</nz-tag></span
+                >
+                <span>
+                  {{ !list.notFirst ? "Tham gia vào:" : "Vẫn có mặt lúc:" }}
+                  <nz-tag [nzColor]="'green'">{{ list.date }}</nz-tag></span
+                >
                 <br />
               </span>
             </div>

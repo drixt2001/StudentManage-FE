@@ -19,4 +19,9 @@ export class PersonalDataService {
     const Url = `${host}/personal/list?type=${type}`;
     return this.http.get<any>(Url).pipe();
   }
+
+  getDetail(type: string, id: any) {
+    const Url = `${host}/personal/detail/${id}?type=${type}`;
+    return this.http.get<any>(Url).pipe();
+  }
 }

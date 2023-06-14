@@ -20,6 +20,10 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -44,6 +48,9 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     NzDatePickerModule,
     NzMessageModule,
     NzTabsModule,
+    NzTagModule,
+    NzInputNumberModule,
+    NzStatisticModule,
   ],
   exports: [
     NzLayoutModule,
@@ -66,6 +73,9 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     NzDatePickerModule,
     NzMessageModule,
     NzTabsModule,
+    NzTagModule,
+    NzInputNumberModule,
+    NzStatisticModule,
   ],
 })
 export class AntDesignModule {}

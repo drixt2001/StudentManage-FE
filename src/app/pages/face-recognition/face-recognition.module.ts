@@ -4,10 +4,17 @@ import { FaceRecognitionComponent } from './face-recognition.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AntDesignModule } from 'src/app/modules/ant-design/ant-design.module';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [FaceRecognitionComponent],
-  imports: [CommonModule, HttpClientModule, AntDesignModule, RouterModule],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    AntDesignModule,
+    RouterModule,
+    FormsModule,
+  ],
   exports: [FaceRecognitionComponent],
 })
 export class FaceRecognitionModule {}

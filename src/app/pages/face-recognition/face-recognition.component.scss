@@ -70,3 +70,35 @@
 .right-layout {
   background-color: white;
 }
+
+.setup-title {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2f5;
+  animation-name: slidein;
+  animation-duration: 0.9s;
+
+  .icon {
+    margin-right: 10px;
+  }
+}
+
+.item-update {
+  margin-bottom: 10px;
+}
+
+.list-update {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+::ng-deep {
+  .ant-tabs-content {
+    height: 100%;
+  }
+}

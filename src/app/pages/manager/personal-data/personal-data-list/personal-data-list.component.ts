@@ -19,6 +19,7 @@ export class PersonalDataListComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedRole = 'teacher';
+    this.getData();
   }
 
   search() {
@@ -37,5 +38,6 @@ export class PersonalDataListComponent implements OnInit {
 
   setData() {
     this.personalData = [];
+    this.getData();
   }
 }
