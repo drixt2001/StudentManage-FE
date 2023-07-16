@@ -6,7 +6,7 @@ import { LoadingService } from '../../../../interceptor/loading/loading.service'
 import { catchError, map, mergeMap, of } from 'rxjs';
 import { face } from '../../../../modules/face-api/face-api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { host } from '../../../../config/host';
 import { PersonalDataService } from '../personal-data.service';
 import { ToastService } from 'src/app/components/toast/toast.service';
@@ -25,15 +25,28 @@ export class PersonalDataViewComponent implements OnInit {
   isEdit = false;
   personId!: string;
   uploadPicLink?: string;
+  passwordVisible!: boolean;
 
   personalForm = new FormGroup({
-    id: new FormControl(''),
-    name: new FormControl(''),
-    birthday: new FormControl(''),
-    department: new FormControl(0),
-    class: new FormControl(0),
-    role: new FormControl(''),
-    countPictures: new FormControl(0),
+    id: new FormControl('', [Validators.required, Validators.minLength(10)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]),
+    name: new FormControl('', [Validators.required]),
+    birthday: new FormControl('', [Validators.required]),
+    department: new FormControl(0, [Validators.required]),
+    class: new FormControl(
+      0,
+      this.selectedRoleStudent ? [Validators.required] : undefined
+    ),
+    role: new FormControl(
+      '',
+      !this.selectedRoleStudent ? [Validators.required] : undefined
+    ),
+    address: new FormControl('', [Validators.required]),
+    countPictures: new FormControl(null),
   });
 
   constructor(

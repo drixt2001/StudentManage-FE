@@ -22,12 +22,13 @@
         nzAllowClear
         nzPlaceHolder="Khoa"
         [(ngModel)]="selectedDepartment"
+        (ngModelChange)="changeDepartment()"
       >
-        <nz-option nzLabel="QTKD" nzValue="qtkd"></nz-option>
-        <nz-option nzLabel="KT-TC" nzValue="kttc"></nz-option>
-        <nz-option nzLabel="KTPT" nzValue="ktpt"></nz-option>
-        <nz-option nzLabel="HTTTKT" nzValue="htttkt"></nz-option>
-        <nz-option nzLabel="KTCT" nzValue="ktct"></nz-option>
+        <nz-option
+          *ngFor="let department of departmentData"
+          [nzLabel]="department.name"
+          [nzValue]="department.id"
+        ></nz-option>
       </nz-select>
     </div>
     <!-- Khoa -->
@@ -42,21 +43,38 @@
         nzAllowClear
         nzPlaceHolder="Lớp"
         [(ngModel)]="selectedClass"
+        (ngModelChange)="getData()"
       >
-        <nz-option nzLabel="K53 THKT" nzValue="thkt"></nz-option>
-        <nz-option nzLabel="K53 TKKD" nzValue="tkkd"></nz-option>
+        <nz-option
+          *ngFor="let class of classData"
+          [nzLabel]="class.name"
+          [nzValue]="class.id"
+        ></nz-option>
       </nz-select>
     </div>
     <!-- Lop -->
 
     <!-- Ten -->
     <div class="filter-child">
-      <input
-        class="name"
-        nz-input
-        placeholder="Tìm Theo Tên"
-        [(ngModel)]="nameValue"
-      />
+      <nz-input-group [nzSuffix]="inputClearTpl">
+        <input
+          nzAllowClear
+          class="name"
+          nz-input
+          placeholder="Tìm Theo Tên"
+          [(ngModel)]="nameValue"
+        />
+        <ng-template #inputClearTpl>
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            *ngIf="nameValue"
+            (click)="nameValue = ''"
+          ></span>
+        </ng-template>
+      </nz-input-group>
     </div>
     <!-- Ten -->
 

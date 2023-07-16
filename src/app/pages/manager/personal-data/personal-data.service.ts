@@ -15,8 +15,16 @@ export class PersonalDataService {
     public router: Router
   ) {}
 
-  getList(type: string) {
-    const Url = `${host}/personal/list?type=${type}`;
+  getList(
+    type: string,
+    department_id?: string,
+    class_id?: string,
+    name?: string
+  ) {
+    let Url = `${host}/personal/list?type=${type}`;
+    if (department_id) Url += `&department=${department_id}`;
+    if (class_id) Url += `&class_id=${class_id}`;
+    if (name) Url += `&name=${name}`;
     return this.http.get<any>(Url).pipe();
   }
 

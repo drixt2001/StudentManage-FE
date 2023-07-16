@@ -24,6 +24,40 @@
         [nzLayout]="'vertical'"
       >
         <nz-form-item>
+          <nz-form-label [nzSpan]="null">Email </nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              formControlName="email"
+              nz-input
+              placeholder="ID@hce.edu.vn"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="password"
+            >Mật khẩu</nz-form-label
+          >
+          <nz-form-control [nzSpan]="null">
+            <nz-input-group [nzSuffix]="suffixTemplate">
+              <input
+                [type]="passwordVisible ? 'text' : 'password'"
+                nz-input
+                formControlName="password"
+                placeholder="Tối thiểu 6 ký tự"
+              />
+            </nz-input-group>
+          </nz-form-control>
+          <ng-template #suffixTemplate>
+            <span
+              nz-icon
+              [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+              (click)="passwordVisible = !passwordVisible"
+            ></span>
+          </ng-template>
+        </nz-form-item>
+
+        <nz-form-item>
           <nz-form-label [nzSpan]="null"
             >Mã
             {{
@@ -39,7 +73,14 @@
             />
           </nz-form-control>
         </nz-form-item>
+      </form>
 
+      <form
+        [formGroup]="personalForm"
+        class="profile form"
+        nz-form
+        [nzLayout]="'vertical'"
+      >
         <nz-form-item>
           <nz-form-label [nzSpan]="null">Họ và Tên</nz-form-label>
           <nz-form-control [nzSpan]="null">
@@ -51,6 +92,17 @@
           <nz-form-label [nzSpan]="null">Ngày Sinh</nz-form-label>
           <nz-form-control [nzSpan]="null">
             <nz-date-picker formControlName="birthday"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Địa Chỉ</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input
+              formControlName="address"
+              nz-input
+              placeholder="Nguyễn Văn A"
+            />
           </nz-form-control>
         </nz-form-item>
       </form>
