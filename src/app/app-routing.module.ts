@@ -8,6 +8,7 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { ManagerComponent } from './pages/manager/manager.component';
 import { PeriodComponent } from './pages/manager/period/period.component';
 import { ModuleComponent } from './pages/manager/module/module.component';
+import { ViewComponent } from './pages/manager/module/view/view.component';
 
 const routes: Routes = [
   { path: 'face-recognition', component: FaceRecognitionComponent },
@@ -34,6 +35,10 @@ const routes: Routes = [
       {
         path: 'hocphan',
         component: ModuleComponent,
+      },
+      {
+        path: 'hocphan/:id',
+        component: ViewComponent,
       },
     ],
   },

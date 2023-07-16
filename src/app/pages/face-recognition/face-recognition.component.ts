@@ -12,6 +12,8 @@ import { face } from '../../modules/face-api/face-api';
 import * as dayjs from 'dayjs';
 import { host } from '../../config/host';
 import { ToastService } from 'src/app/components/toast/toast.service';
+import { PeriodService } from '../manager/period/period.service';
+import { ModuleService } from '../manager/module/module.service';
 @Component({
   selector: 'app-face-recognition',
   templateUrl: './face-recognition.component.html',
@@ -39,7 +41,18 @@ export class FaceRecognitionComponent
   timeInterval = setInterval(() => {
     this.timenow = dayjs(Date.now()).format('HH:mm:ss DD/MM/YYYY');
   }, 1000);
-  constructor(private httpClient: HttpClient, private toast: ToastService) {}
+
+  currentPeriod?: any;
+  moduleData: any[] = [];
+
+  selectedModule?: number;
+
+  constructor(
+    private httpClient: HttpClient,
+    private toast: ToastService,
+    private periodService: PeriodService,
+    private moduleService: ModuleService
+  ) {}
 
   ngOnDestroy(): void {
     this.stopCam();
@@ -49,7 +62,28 @@ export class FaceRecognitionComponent
     this.video = undefined;
   }
 
-  ngOnInit(): void {}
+  getDatakey(module_id: number, key: string): string {
+    return this.moduleData.filter((val) => (val.id = module_id))[0][key];
+  }
+
+  ngOnInit(): void {
+    this.getCurrentPeriod();
+    this.getListModule();
+  }
+
+  getCurrentPeriod() {
+    this.periodService.getActiveNow().subscribe((res) => {
+      if (res.data.length) {
+        this.currentPeriod = res.data[0];
+      }
+    });
+  }
+
+  getListModule() {
+    this.moduleService.getList().subscribe((res) => {
+      this.moduleData = res.data;
+    });
+  }
 
   ngAfterViewInit(): void {}
 
@@ -92,7 +126,7 @@ export class FaceRecognitionComponent
     } else {
       // load model first
       this.httpClient
-        .get<any[]>(`${host}/personal/model/all`)
+        .get<any[]>(`${host}/personal/model/${this.selectedModule}`)
         .subscribe((faceDescriptors) => {
           if (faceDescriptors.length) {
             this.faceDescriptors = this.convertData(faceDescriptors);

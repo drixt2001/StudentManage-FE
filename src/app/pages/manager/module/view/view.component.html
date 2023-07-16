@@ -1,0 +1,281 @@
+<ul nz-menu nzMode="horizontal">
+  <li nz-menu-item nzSelected (click)="changeTab('infos')">
+    <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+    Thông Tin
+  </li>
+
+  <li nz-menu-item (click)="changeTab('settings')">
+    <span nz-icon nzType="setting" nzTheme="outline"></span>
+    Cấu Hình
+  </li>
+
+  <li nz-menu-item (click)="changeTab('students')">
+    <span nz-icon nzType="user" nzTheme="outline"></span>
+    Đăng Ký Sinh Viên
+  </li>
+
+  <li nz-menu-item (click)="changeTab('results')">
+    <span nz-icon nzType="form" nzTheme="outline"></span>
+    Kết Quả Điểm Danh
+  </li>
+</ul>
+
+<div class="container">
+  <div *ngIf="selectedTab === 'infos'" class="infos bar">
+    <div class="infos content">
+      <form [formGroup]="moduleForm" nz-form>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Mã học phần</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <input formControlName="sid" nz-input name="full_name" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Tên học phần</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <input formControlName="name" nz-input name="full_name" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Học Kỳ</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select
+              formControlName="period_id"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Học Kỳ"
+            >
+              <nz-option
+                *ngFor="let period of periodData"
+                [nzLabel]="period.full_name"
+                [nzValue]="period.id"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Khoa</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Khoa"
+              formControlName="department_id"
+              (ngModelChange)="changeDepartment()"
+            >
+              <nz-option
+                *ngFor="let department of departmentData"
+                [nzLabel]="department.name"
+                [nzValue]="department.id"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Giảng Viên</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select
+              formControlName="teacher_id"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Giảng viên giảng dạy"
+            >
+              <nz-option
+                *ngFor="let teacher of teacherData"
+                [nzLabel]="teacher.name"
+                [nzValue]="teacher.teacher_id"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Số TC</nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select
+              formControlName="credit"
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Số Tín Chỉ"
+            >
+              <nz-option nzLabel="1" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="2" [nzValue]="2"></nz-option>
+              <nz-option nzLabel="3" [nzValue]="3"></nz-option>
+              <nz-option nzLabel="4" [nzValue]="4"></nz-option>
+              <nz-option nzLabel="7" [nzValue]="7"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="selectedTab === 'students'" class="students bar">
+    <div class="clearfix">
+      <nz-transfer
+        [nzDataSource]="studentList"
+        [nzShowSearch]="true"
+        [nzShowSelectAll]="false"
+        [nzRenderList]="[renderList, renderList]"
+        (nzSelectChange)="select($event)"
+        (nzChange)="change($event)"
+      >
+        <ng-template
+          #renderList
+          let-items
+          let-direction="direction"
+          let-stat="stat"
+          let-disabled="disabled"
+          let-onItemSelectAll="onItemSelectAll"
+          let-onItemSelect="onItemSelect"
+        >
+          <nz-table #t [nzData]="$asTransferItems(items)" nzSize="small">
+            <thead>
+              <tr>
+                <th
+                  [nzDisabled]="disabled"
+                  [nzChecked]="stat.checkAll"
+                  [nzIndeterminate]="stat.checkHalf"
+                  (nzCheckedChange)="onItemSelectAll($event)"
+                ></th>
+                <th>MSV</th>
+                <th>Tên</th>
+                <th *ngIf="direction === 'left'">Ngày Sinh</th>
+                <th>Lớp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of t.data" (click)="onItemSelect(data)">
+                <td
+                  [nzChecked]="!!data.checked"
+                  [nzDisabled]="disabled || data.disabled"
+                  (nzCheckedChange)="onItemSelect(data)"
+                ></td>
+                <td>{{ data.id }}</td>
+                <td>{{ data.name }}</td>
+                <td *ngIf="direction === 'left'">
+                  <nz-tag>{{ data.birthday | date : "dd/MM/yyyy" }}</nz-tag>
+                </td>
+                <td>{{ data.class_name }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </ng-template>
+      </nz-transfer>
+    </div>
+  </div>
+
+  <div
+    style="display: flex"
+    *ngIf="selectedTab === 'settings'"
+    class="settings bar"
+  >
+    <div class="left">
+      <h4 style="width: 100%" nz-typography>Thời Gian Học</h4>
+      <div class="time" *ngFor="let time of weektimes">
+        <label
+          style="width: 40%"
+          nz-checkbox
+          [(ngModel)]="time.checked"
+          (ngModelChange)="changeTime()"
+          >{{ time.name }}</label
+        >
+        <nz-select
+          #start
+          [disabled]="!time.checked"
+          style="margin-left: 0.5rem; width: 25%"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Bắt Đầu"
+          [(ngModel)]="time.start"
+          (ngModelChange)="changeTime()"
+        >
+          <nz-option
+            *ngFor="let item of generateListTime()"
+            [nzLabel]="item"
+            [nzValue]="item"
+          ></nz-option>
+        </nz-select>
+        <nz-select
+          #end
+          [disabled]="!time.checked"
+          style="margin-left: 0.5rem; width: 25%"
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Kết Thúc"
+          [(ngModel)]="time.end"
+          (ngModelChange)="changeTime()"
+        >
+          <nz-option
+            *ngFor="let item of generateListTime()"
+            [nzLabel]="item"
+            [nzValue]="item"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <button
+        [disabled]="!this.currentTime.length"
+        style="margin-top: 1rem"
+        (click)="updateSchedule()"
+        nzShape="round"
+        nz-button
+        nzType="primary"
+      >
+        Cập Nhật Lịch
+      </button>
+    </div>
+
+    <div style="padding-left: 2rem" class="left">
+      <h4 style="width: 100%" nz-typography>Điều Kiện Điểm Danh</h4>
+      <form
+        style="margin-top: 1rem"
+        nzLayout="vertical"
+        [formGroup]="moduleForm"
+        nz-form
+      >
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Số Phép Vắng Tối Đa</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <nz-input-number
+              style="width: 100%"
+              formControlName="allow_leaving"
+              [nzMin]="1"
+              [nzMax]="20"
+              [nzStep]="1"
+            ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null">Số Phút Muộn Hợp Lệ</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <nz-input-number
+              style="width: 100%"
+              formControlName="allow_delay"
+              [nzMin]="1"
+              [nzMax]="20"
+              [nzStep]="1"
+            ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+      <button
+        style="margin-top: 1rem"
+        (click)="updateAllow()"
+        nzShape="round"
+        nz-button
+        nzType="primary"
+      >
+        Cập Nhật Cho Phép
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="selectedTab === 'results'" class="settings bar">
+    Kết quả điểm danh của các sinh viên
+  </div>
+</div>

@@ -19,18 +19,69 @@
             [nzTitle]="'Thời Gian Hiện Tại'"
           ></nz-statistic>
         </div>
-        <form nz-form>
+
+        <h3 style="margin-top: 1rem" nz-typography>
+          Học kỳ:
+          <nz-tag [nzColor]="'#2db7f5'">{{ currentPeriod?.full_name }}</nz-tag>
+        </h3>
+
+        <form nzLayout="vertical" style="margin-top: 2rem" nz-form>
           <nz-form-item>
-            <nz-form-label nzFor="email"
+            <nz-form-label [nzSpan]="null">Học Phần</nz-form-label>
+            <nz-form-control [nzSpan]="null">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Chọn học phần"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="selectedModule"
+              >
+                <nz-option
+                  *ngFor="let module of moduleData"
+                  [nzLabel]="module.name"
+                  [nzValue]="module.id"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item *ngIf="selectedModule">
+            <nz-form-label [nzSpan]="null">Giảng Viên</nz-form-label>
+            <nz-form-control [nzSpan]="null">
+              <input
+                [value]="getDatakey(selectedModule, 'teacher')"
+                [readonly]="true"
+                nz-input
+                placeholder="Số Ảnh Huấn Luyện"
+              />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item *ngIf="selectedModule">
+            <nz-form-label [nzSpan]="null">Số Sinh Viên Đăng Ký</nz-form-label>
+            <nz-form-control [nzSpan]="null">
+              <input
+                [value]="getDatakey(selectedModule, 'count_student')"
+                [readonly]="true"
+                nz-input
+                placeholder="Số Ảnh Huấn Luyện"
+              />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="null"
               >Số phút lặp lại kiểm tra</nz-form-label
             >
-            <nz-input-number
-              [ngModelOptions]="{ standalone: true }"
-              [(ngModel)]="timeRepeatCheck"
-              [nzMin]="1"
-              [nzMax]="20"
-              [nzStep]="1"
-            ></nz-input-number>
+            <nz-form-control [nzSpan]="null"
+              ><nz-input-number
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="timeRepeatCheck"
+                [nzMin]="1"
+                [nzMax]="20"
+                [nzStep]="1"
+              ></nz-input-number
+            ></nz-form-control>
           </nz-form-item>
         </form>
       </div>
@@ -45,7 +96,7 @@
           nz-button
           nzType="primary"
           nzShape="round"
-          [disabled]="!readyEnableCamera"
+          [disabled]="!readyEnableCamera || !selectedModule"
           *ngIf="!enableCamera"
         >
           <span nz-icon nzType="video-camera" nzTheme="outline"></span>

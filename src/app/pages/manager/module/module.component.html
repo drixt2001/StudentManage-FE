@@ -78,7 +78,9 @@
           <td>{{ data.credit }}</td>
           <td>
             <div style="display: flex" class="flex">
-              <button nz-button nzType="default">Xem</button>
+              <button [routerLink]="[data.id]" nz-button nzType="default">
+                Xem
+              </button>
               <nz-divider nzType="vertical"></nz-divider>
               <button
                 (nzOnConfirm)="delete(data.id)"

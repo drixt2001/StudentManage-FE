@@ -21,6 +21,7 @@ import { LoginModule } from './pages/auth/login/login.module';
 import { ApiInterceptor } from './interceptor/api/api.interceptor';
 import { PeriodModule } from './pages/manager/period/period.module';
 import { ModuleModule } from './pages/manager/module/module.module';
+import { ViewModule } from './pages/manager/module/view/view.module';
 
 registerLocaleData(vi);
 
@@ -45,6 +46,7 @@ registerLocaleData(vi);
     PersonalDataViewModule,
     PeriodModule,
     ModuleModule,
+    ViewModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },
