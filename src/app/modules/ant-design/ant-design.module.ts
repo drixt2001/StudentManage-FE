@@ -23,6 +23,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 
 @NgModule({
   declarations: [],
@@ -51,6 +52,7 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
     NzTagModule,
     NzInputNumberModule,
     NzStatisticModule,
+    NzPopconfirmModule,
   ],
   exports: [
     NzLayoutModule,
@@ -76,6 +78,7 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
     NzTagModule,
     NzInputNumberModule,
     NzStatisticModule,
+    NzPopconfirmModule,
   ],
 })
 export class AntDesignModule {}

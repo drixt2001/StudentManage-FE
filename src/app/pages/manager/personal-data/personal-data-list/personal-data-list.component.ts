@@ -15,7 +15,7 @@ export class PersonalDataListComponent implements OnInit {
   ) {}
 
   selectedRole!: string;
-  selectedDepartment!: string;
+  selectedDepartment?: string;
   selectedClass?: string;
   nameValue!: string;
 
@@ -67,9 +67,10 @@ export class PersonalDataListComponent implements OnInit {
     });
   }
 
-  getListClass(id: string) {
-    this.departmentService.getListClass(id).subscribe((cls) => {
-      this.classData = cls.data;
-    });
+  getListClass(id?: string) {
+    id &&
+      this.departmentService.getListClass(id).subscribe((cls) => {
+        this.classData = cls.data;
+      });
   }
 }

@@ -1,0 +1,206 @@
+<div class="container">
+  <div class="filter-bar">
+    <!-- Hoc ky -->
+    <div class="filter-child">
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn Học Kỳ">
+      </nz-select>
+    </div>
+    <!-- Hoc ky -->
+
+    <div class="filter-child">
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn Khoa">
+      </nz-select>
+    </div>
+
+    <!-- Ten -->
+    <div class="filter-child">
+      <nz-input-group [nzSuffix]="inputClearTpl">
+        <input
+          nzAllowClear
+          class="name"
+          nz-input
+          placeholder="Tìm Theo Tên"
+          [(ngModel)]="nameValue"
+        />
+        <ng-template #inputClearTpl>
+          <span
+            nz-icon
+            class="ant-input-clear-icon"
+            nzTheme="fill"
+            nzType="close-circle"
+            *ngIf="nameValue"
+            (click)="nameValue = ''"
+          ></span>
+        </ng-template>
+      </nz-input-group>
+    </div>
+    <!-- Ten -->
+
+    <!-- Button -->
+    <button (click)="search()" nz-button nzType="primary">
+      <span nz-icon nzType="search"></span>
+      Tìm Kiếm
+    </button>
+
+    <button
+      class="button add"
+      (click)="toggleModal()"
+      nz-button
+      nzType="primary"
+    >
+      <span nz-icon nzType="plus-circle" nzTheme="outline"></span>
+      Tạo Học Phần
+    </button>
+    <!-- Button -->
+  </div>
+  <div class="table container">
+    <nz-table nzBordered #Table [nzData]="listOfData">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Mã</th>
+          <th>Học Phần</th>
+          <th>Học Kỳ</th>
+          <th>Khoa</th>
+          <th>Giảng Viên</th>
+          <th>Số TC</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of Table.data">
+          <td>{{ Table.data.indexOf(data) + 1 }}</td>
+          <td>{{ data.sid }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.period }}</td>
+          <td>{{ data.department }}</td>
+          <td>{{ data.teacher }}</td>
+          <td>{{ data.credit }}</td>
+          <td>
+            <div style="display: flex" class="flex">
+              <button nz-button nzType="default">Xem</button>
+              <nz-divider nzType="vertical"></nz-divider>
+              <button
+                (nzOnConfirm)="delete(data.id)"
+                nzType="default"
+                nzDanger
+                nz-popconfirm
+                nzPopconfirmTitle="Xác nhận xóa học phần này? Không thể phục hồi dữ liệu!"
+                nzPopconfirmPlacement="topRight"
+                nz-button
+              >
+                Xóa
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+<nz-modal
+  [nzFooter]="modalFooter"
+  [(nzVisible)]="isVisible"
+  nzTitle="Tạo Học Phần"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+>
+  <ng-container *nzModalContent>
+    <form [formGroup]="moduleForm" nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Mã học phần</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input formControlName="sid" nz-input name="full_name" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Tên học phần</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input formControlName="name" nz-input name="full_name" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Học Kỳ</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select
+            formControlName="period_id"
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="Học Kỳ"
+          >
+            <nz-option
+              *ngFor="let period of periodData"
+              [nzLabel]="period.full_name"
+              [nzValue]="period.id"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Khoa</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="Khoa"
+            formControlName="department_id"
+            (ngModelChange)="changeDepartment()"
+          >
+            <nz-option
+              *ngFor="let department of departmentData"
+              [nzLabel]="department.name"
+              [nzValue]="department.id"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Giảng Viên</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select
+            formControlName="teacher_id"
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="Giảng viên giảng dạy"
+          >
+            <nz-option
+              *ngFor="let teacher of teacherData"
+              [nzLabel]="teacher.name"
+              [nzValue]="teacher.teacher_id"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Số TC</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select
+            formControlName="credit"
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="Số Tín Chỉ"
+          >
+            <nz-option nzLabel="1" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="2" [nzValue]="2"></nz-option>
+            <nz-option nzLabel="3" [nzValue]="3"></nz-option>
+            <nz-option nzLabel="4" [nzValue]="4"></nz-option>
+            <nz-option nzLabel="7" [nzValue]="7"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+
+  <ng-template #modalFooter>
+    <button (click)="handleCancel()" nz-button nzType="default">Hủy</button>
+    <button nz-button nzType="primary" (click)="handleOk()">
+      Tạo Học Phần
+    </button>
+  </ng-template>
+</nz-modal>

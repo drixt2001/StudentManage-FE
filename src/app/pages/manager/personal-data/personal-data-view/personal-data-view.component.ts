@@ -10,6 +10,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { host } from '../../../../config/host';
 import { PersonalDataService } from '../personal-data.service';
 import { ToastService } from 'src/app/components/toast/toast.service';
+import { DepartmentService } from '../../department/department.service';
 
 @Component({
   selector: 'app-personal-data-view',
@@ -26,6 +27,8 @@ export class PersonalDataViewComponent implements OnInit {
   personId!: string;
   uploadPicLink?: string;
   passwordVisible!: boolean;
+  departmentData: any[] = [];
+  classData: any[] = [];
 
   personalForm = new FormGroup({
     id: new FormControl('', [Validators.required, Validators.minLength(10)]),
@@ -52,6 +55,7 @@ export class PersonalDataViewComponent implements OnInit {
   constructor(
     private service: PersonalDataViewService,
     private personalService: PersonalDataService,
+    private departmentService: DepartmentService,
     public loadingService: LoadingService,
     private route: ActivatedRoute,
     private router: Router,
@@ -59,6 +63,8 @@ export class PersonalDataViewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getListDepartment();
+
     this.route.paramMap.subscribe((params) => {
       this.personId = params.get('Id')!;
     });
@@ -69,6 +75,25 @@ export class PersonalDataViewComponent implements OnInit {
       this.getDetailData();
       this.uploadPicLink = `${host}/personal/upload/${this.personId}`;
     }
+  }
+
+  getListDepartment() {
+    this.departmentService.getList().subscribe((dep) => {
+      this.departmentData = dep.data;
+    });
+  }
+
+  getListClass(id?: string) {
+    id &&
+      this.departmentService.getListClass(id).subscribe((cls) => {
+        this.classData = cls.data;
+      });
+  }
+
+  changeDepartment() {
+    this.personalForm.value.department &&
+      this.getListClass(this.personalForm.value.department.toString());
+    this.personalForm.controls.class.reset();
   }
 
   createPerson() {
@@ -143,6 +168,8 @@ export class PersonalDataViewComponent implements OnInit {
     this.personalService.getDetail(type, this.personId).subscribe((val) => {
       const data = { ...val.data, countPictures: this.maxNumber };
       this.personalForm.patchValue(data);
+      this.personalForm.value.department &&
+        this.getListClass(this.personalForm.value.department.toString());
     });
   }
   uploadDataModel() {

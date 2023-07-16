@@ -19,6 +19,8 @@ import { LoadingInterceptor } from './interceptor/loading/loading.interceptor';
 import { ManagerModule } from './pages/manager/manager.module';
 import { LoginModule } from './pages/auth/login/login.module';
 import { ApiInterceptor } from './interceptor/api/api.interceptor';
+import { PeriodModule } from './pages/manager/period/period.module';
+import { ModuleModule } from './pages/manager/module/module.module';
 
 registerLocaleData(vi);
 
@@ -41,6 +43,8 @@ registerLocaleData(vi);
     FaceRecognitionModule,
     PersonalDataListModule,
     PersonalDataViewModule,
+    PeriodModule,
+    ModuleModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },

@@ -6,6 +6,8 @@ import { PersonalDataListComponent } from './pages/manager/personal-data/persona
 import { PersonalDataViewComponent } from './pages/manager/personal-data/personal-data-view/personal-data-view.component';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { ManagerComponent } from './pages/manager/manager.component';
+import { PeriodComponent } from './pages/manager/period/period.component';
+import { ModuleComponent } from './pages/manager/module/module.component';
 
 const routes: Routes = [
   { path: 'face-recognition', component: FaceRecognitionComponent },
@@ -24,6 +26,14 @@ const routes: Routes = [
       {
         path: 'canhan/tao',
         component: PersonalDataViewComponent,
+      },
+      {
+        path: 'hocky',
+        component: PeriodComponent,
+      },
+      {
+        path: 'hocphan',
+        component: ModuleComponent,
       },
     ],
   },

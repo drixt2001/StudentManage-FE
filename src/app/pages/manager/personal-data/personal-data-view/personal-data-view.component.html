@@ -121,12 +121,13 @@
               nzShowSearch
               nzAllowClear
               nzPlaceHolder="Khoa"
+              (ngModelChange)="changeDepartment()"
             >
-              <nz-option nzLabel="QTKD" [nzValue]="1"></nz-option>
-              <nz-option nzLabel="KT-TC" [nzValue]="2"></nz-option>
-              <nz-option nzLabel="KTPT" [nzValue]="3"></nz-option>
-              <nz-option nzLabel="HTTTKT" [nzValue]="4"></nz-option>
-              <nz-option nzLabel="KTCT" [nzValue]="5"></nz-option>
+              <nz-option
+                *ngFor="let department of departmentData"
+                [nzLabel]="department.name"
+                [nzValue]="department.id"
+              ></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -140,8 +141,11 @@
               nzAllowClear
               nzPlaceHolder="Lớp"
             >
-              <nz-option nzLabel="K53 THKT" [nzValue]="1"></nz-option>
-              <nz-option nzLabel="K53 TKKD" [nzValue]="2"></nz-option>
+              <nz-option
+                *ngFor="let class of classData"
+                [nzLabel]="class.name"
+                [nzValue]="class.id"
+              ></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>

@@ -1,0 +1,94 @@
+<div class="container">
+  <div class="create-bar">
+    <button (click)="toggleModal(true)" nz-button nzType="primary">
+      <span nz-icon nzType="plus-circle" nzTheme="outline"></span>
+      Tạo kỳ mới
+    </button>
+  </div>
+  <div class="table container">
+    <nz-table nzBordered #Table [nzData]="listOfData">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Học kỳ</th>
+          <th>Bắt đầu</th>
+          <th>Kết thúc</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of Table.data">
+          <td>{{ Table.data.indexOf(data) + 1 }}</td>
+          <td>{{ data.full_name }}</td>
+          <td>{{ data.start | date : "dd/MM/yyyy" }}</td>
+          <td>{{ data.end | date : "dd/MM/yyyy" }}</td>
+          <td>
+            <div style="display: flex" class="flex">
+              <button (click)="toggleModal(data)" nz-button nzType="default">
+                Sửa
+              </button>
+              <nz-divider nzType="vertical"></nz-divider>
+              <button
+                (nzOnConfirm)="delete(data.id)"
+                nzType="default"
+                nzDanger
+                nz-popconfirm
+                nzPopconfirmTitle="Xác nhận xóa thông báo này? Không thể phục hồi dữ liệu!"
+                nzPopconfirmPlacement="topRight"
+                nz-button
+              >
+                Xóa
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+<nz-modal
+  [nzFooter]="modalFooter"
+  [(nzVisible)]="isVisible"
+  nzTitle="{{ buttonTitle }}"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+>
+  <ng-container *nzModalContent>
+    <form [formGroup]="PeriodForm" nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Tên học kỳ</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input formControlName="full_name" nz-input name="full_name" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Mgày bắt đầu</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-date-picker
+            formControlName="start"
+            nzFormat="dd/MM/yyyy"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">Mgày kết thúc</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-date-picker
+            formControlName="end"
+            nzFormat="dd/MM/yyyy"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+
+  <ng-template #modalFooter>
+    <button (click)="handleCancel()" nz-button nzType="default">Hủy</button>
+    <button nz-button nzType="primary" (click)="handleOk()">
+      {{ buttonTitle }}
+    </button>
+  </ng-template>
+</nz-modal>

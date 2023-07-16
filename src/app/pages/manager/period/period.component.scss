@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+nz-table {
+  width: 100%;
+}
+
+nz-alert {
+  width: 150px;
+}
+
+.create-bar {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
