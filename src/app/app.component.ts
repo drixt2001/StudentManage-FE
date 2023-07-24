@@ -1,16 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { check, face } from './modules/face-api/face-api';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, DoCheck {
   title = 'quanlysinhvien';
+  canActive = false;
+  percent = 0;
 
   ngOnInit(): void {
     this.getFaceAPIModel();
+  }
+
+  ngDoCheck(): void {
+    this.getFaceAPISuccess().subscribe((isSuccess) => {
+      if (isSuccess) {
+        this.canActive = true;
+        this.percent += 25;
+      }
+    });
+  }
+
+  getFaceAPISuccess(): Observable<boolean> {
+    if (face.nets.faceLandmark68Net.isLoaded) this.percent += 15;
+    if (face.nets.faceExpressionNet.isLoaded) this.percent += 15;
+    if (face.nets.faceRecognitionNet.isLoaded) this.percent += 15;
+    if (face.nets.tinyFaceDetector.isLoaded) this.percent += 15;
+    if (face.nets.ssdMobilenetv1.isLoaded) this.percent += 15;
+    return of(
+      face.nets.faceLandmark68Net.isLoaded &&
+        face.nets.faceExpressionNet.isLoaded &&
+        face.nets.faceRecognitionNet.isLoaded &&
+        face.nets.tinyFaceDetector.isLoaded &&
+        face.nets.ssdMobilenetv1.isLoaded
+    );
   }
 
   async getFaceAPIModel() {

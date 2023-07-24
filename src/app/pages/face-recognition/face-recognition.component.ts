@@ -14,6 +14,7 @@ import { host } from '../../config/host';
 import { ToastService } from 'src/app/components/toast/toast.service';
 import { PeriodService } from '../manager/period/period.service';
 import { ModuleService } from '../manager/module/module.service';
+import { FaceRecognitionService } from './face-recognition.service';
 @Component({
   selector: 'app-face-recognition',
   templateUrl: './face-recognition.component.html',
@@ -51,7 +52,8 @@ export class FaceRecognitionComponent
     private httpClient: HttpClient,
     private toast: ToastService,
     private periodService: PeriodService,
-    private moduleService: ModuleService
+    private moduleService: ModuleService,
+    private faceRecognitionService: FaceRecognitionService
   ) {}
 
   ngOnDestroy(): void {
@@ -145,6 +147,7 @@ export class FaceRecognitionComponent
                       ) as HTMLVideoElement;
 
                       this.createCanvas();
+                      this.faceRecognitionService.addRollCallingClass();
                       clearInterval(setCamera);
                     }
                   }, 25);
@@ -159,6 +162,7 @@ export class FaceRecognitionComponent
   }
 
   async stopCam() {
+    this.faceRecognitionService.removeRollCallingClass();
     await this.srcObject?.getTracks().forEach(function (track) {
       if (track.readyState == 'live' && track.kind === 'video') {
         track.stop();
@@ -188,8 +192,8 @@ export class FaceRecognitionComponent
 
           const resize = faceapi.resizeResults(detecs, size);
 
-          canvas.height = this.video!.offsetHeight;
-          canvas.width = this.video!.offsetWidth;
+          canvas.height = this.video?.offsetHeight || 0;
+          canvas.width = this.video?.offsetWidth || 0;
 
           canvas.getContext('2d')?.clearRect(0, 0, size.width, size.height);
           // faceapi.draw.drawDetections(canvas, resize);

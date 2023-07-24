@@ -26,6 +26,8 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -56,6 +58,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
     NzPopconfirmModule,
     NzTransferModule,
     NzCheckboxModule,
+    NzProgressModule,
   ],
   exports: [
     NzLayoutModule,
@@ -84,6 +87,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
     NzPopconfirmModule,
     NzTransferModule,
     NzCheckboxModule,
+    NzProgressModule,
   ],
 })
 export class AntDesignModule {}

@@ -9,6 +9,7 @@ import { ManagerComponent } from './pages/manager/manager.component';
 import { PeriodComponent } from './pages/manager/period/period.component';
 import { ModuleComponent } from './pages/manager/module/module.component';
 import { ViewComponent } from './pages/manager/module/view/view.component';
+import { DashboardComponent } from './pages/manager/dashboard/dashboard.component';
 
 const routes: Routes = [
   { path: 'face-recognition', component: FaceRecognitionComponent },
@@ -16,6 +17,10 @@ const routes: Routes = [
     path: 'quanly',
     component: ManagerComponent,
     children: [
+      {
+        path: '',
+        component: DashboardComponent,
+      },
       {
         path: 'canhan',
         component: PersonalDataListComponent,

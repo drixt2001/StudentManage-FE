@@ -1,2 +1,10 @@
+<div class="loading-bar" *ngIf="!canActive">
+  <nz-progress
+    [nzPercent]="percent"
+    nzType="circle"
+    [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }"
+  ></nz-progress>
+</div>
+
 <router-outlet></router-outlet>
-<app-loading></app-loading>
+<app-loading *ngIf="canActive"></app-loading>

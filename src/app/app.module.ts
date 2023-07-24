@@ -22,8 +22,13 @@ import { ApiInterceptor } from './interceptor/api/api.interceptor';
 import { PeriodModule } from './pages/manager/period/period.module';
 import { ModuleModule } from './pages/manager/module/module.module';
 import { ViewModule } from './pages/manager/module/view/view.module';
+import { host } from './config/host';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { DashboardModule } from './pages/manager/dashboard/dashboard.module';
 
 registerLocaleData(vi);
+
+const config: SocketIoConfig = { url: host, options: {} };
 
 @NgModule({
   declarations: [AppComponent],
@@ -36,6 +41,7 @@ registerLocaleData(vi);
 
     // external
     AntDesignModule,
+    SocketIoModule.forRoot(config),
 
     // page
     LoginModule,
@@ -47,6 +53,7 @@ registerLocaleData(vi);
     PeriodModule,
     ModuleModule,
     ViewModule,
+    DashboardModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },
