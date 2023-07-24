@@ -1,1 +1,1 @@
-export const host = 'https://studentmanage-be-production.up.railway.app';
+export const host = 'https://studentmanage-be.onrender.com';
