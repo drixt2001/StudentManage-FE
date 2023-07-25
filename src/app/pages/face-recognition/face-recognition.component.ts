@@ -141,6 +141,7 @@ export class FaceRecognitionComponent
               this.faceDescriptors,
               0.6
             );
+
             if (this.faceMatcher) {
               // open camera
               this.getCamera().finally(async () => {
@@ -178,82 +179,81 @@ export class FaceRecognitionComponent
 
   createCanvas() {
     this.faceRecognitionService.addRollCallingClass();
-    this.video?.addEventListener('playing', () => {
-      if (this.video) {
-        const canvas = faceapi.createCanvas(this.video!);
-        canvas.id = 'canvas';
-        document.querySelector('#video-container')?.append(canvas);
 
-        const size = {
-          width: this.video!.offsetWidth,
-          height: this.video!.offsetHeight,
-        };
+    if (this.video) {
+      const canvas = faceapi.createCanvas(this.video!);
+      canvas.id = 'canvas';
+      document.querySelector('#video-container')?.append(canvas);
 
-        this.canvasInterval = setInterval(async () => {
-          const detecs = await faceapi
-            .detectAllFaces(this.video!, new faceapi.TinyFaceDetectorOptions())
-            .withFaceLandmarks()
-            .withFaceExpressions()
-            .withFaceDescriptors();
+      const size = {
+        width: this.video!.offsetWidth,
+        height: this.video!.offsetHeight,
+      };
 
-          const resize = faceapi.resizeResults(detecs, size);
+      this.canvasInterval = setInterval(async () => {
+        const detecs = await faceapi
+          .detectAllFaces(this.video!, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks()
+          .withFaceExpressions()
+          .withFaceDescriptors();
 
-          canvas.height = this.video?.offsetHeight || 0;
-          canvas.width = this.video?.offsetWidth || 0;
+        const resize = faceapi.resizeResults(detecs, size);
 
-          canvas.getContext('2d')?.clearRect(0, 0, size.width, size.height);
-          // faceapi.draw.drawDetections(canvas, resize);
-          // faceapi.draw.drawFaceLandmarks(canvas, resize);
-          faceapi.draw.drawFaceExpressions(canvas, resize);
+        canvas.height = this.video?.offsetHeight || 640;
+        canvas.width = this.video?.offsetWidth || 540;
 
-          for (const detection of resize) {
-            const label = this.faceMatcher
-              .findBestMatch(detection.descriptor)
-              .toString();
+        canvas.getContext('2d')?.clearRect(0, 0, size.width, size.height);
+        // faceapi.draw.drawDetections(canvas, resize);
+        // faceapi.draw.drawFaceLandmarks(canvas, resize);
+        faceapi.draw.drawFaceExpressions(canvas, resize);
+
+        for (const detection of resize) {
+          const label = this.faceMatcher
+            .findBestMatch(detection.descriptor)
+            .toString();
+
+          if (
+            label.substring(0, 7) !== 'unknown' &&
+            !this.listUpdate
+              .map((val) => val.id)
+              .includes(label.substring(0, 10))
+          ) {
+            this.listUpdate.push({
+              id: label.substring(0, 10),
+              date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
+              originDate: Date.now(),
+            });
+            this.hasJoinList.push(label.substring(0, 10));
+          }
+
+          if (
+            label.substring(0, 7) !== 'unknown' &&
+            this.hasJoinList.includes(label.substring(0, 10))
+          ) {
+            const index = [...this.listUpdate]
+              .reverse()
+              .find((val) => (val.id = label.substring(0, 10)));
 
             if (
-              label.substring(0, 7) !== 'unknown' &&
-              !this.listUpdate
-                .map((val) => val.id)
-                .includes(label.substring(0, 10))
+              Date.now() - index.originDate >
+              this.timeRepeatCheck * 60 * 1000
             ) {
               this.listUpdate.push({
                 id: label.substring(0, 10),
                 date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
                 originDate: Date.now(),
+                notFirst: true,
               });
-              this.hasJoinList.push(label.substring(0, 10));
             }
-
-            if (
-              label.substring(0, 7) !== 'unknown' &&
-              this.hasJoinList.includes(label.substring(0, 10))
-            ) {
-              const index = [...this.listUpdate]
-                .reverse()
-                .find((val) => (val.id = label.substring(0, 10)));
-
-              if (
-                Date.now() - index.originDate >
-                this.timeRepeatCheck * 60 * 1000
-              ) {
-                this.listUpdate.push({
-                  id: label.substring(0, 10),
-                  date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
-                  originDate: Date.now(),
-                  notFirst: true,
-                });
-              }
-            }
-
-            const drawBox = new faceapi.draw.DrawBox(detection.detection.box, {
-              label: label,
-            });
-            drawBox.draw(canvas);
           }
-        }, 500);
-      }
-    });
+
+          const drawBox = new faceapi.draw.DrawBox(detection.detection.box, {
+            label: label,
+          });
+          drawBox.draw(canvas);
+        }
+      }, 500);
+    }
   }
 
   convertData(faceDescriptors: any) {
