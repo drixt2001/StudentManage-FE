@@ -25,16 +25,21 @@
           <nz-tag [nzColor]="'#2db7f5'">{{ currentPeriod?.full_name }}</nz-tag>
         </h3>
 
-        <form nzLayout="vertical" style="margin-top: 2rem" nz-form>
+        <form
+          [formGroup]="faceForm"
+          nzLayout="vertical"
+          style="margin-top: 2rem"
+          nz-form
+        >
           <nz-form-item>
             <nz-form-label [nzSpan]="null">Học Phần</nz-form-label>
             <nz-form-control [nzSpan]="null">
               <nz-select
+                formControlName="selectedModule"
                 nzShowSearch
                 nzAllowClear
                 nzPlaceHolder="Chọn học phần"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="selectedModule"
+                (ngModelChange)="changeDepartment()"
               >
                 <nz-option
                   *ngFor="let module of moduleData"
@@ -45,26 +50,63 @@
             </nz-form-control>
           </nz-form-item>
 
-          <nz-form-item *ngIf="selectedModule">
+          <nz-form-item *ngIf="schedule">
+            <nz-form-label [nzSpan]="null">Thời gian học hôm nay</nz-form-label>
+            <nz-form-control [nzSpan]="null">
+              <input
+                [readonly]="true"
+                nz-input
+                value="Từ {{ schedule.start_on_day }} Đến {{
+                  schedule.end_on_day
+                }}"
+              />
+              <nz-alert
+                style="margin-top: 6px"
+                *ngIf="!isBetween()"
+                nzType="warning"
+                nzMessage="Chưa đến hoặc đã quá giờ học"
+                nzShowIcon
+              ></nz-alert>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item
+            *ngIf="!schedule && faceForm.controls.selectedModule.value"
+          >
+            <nz-alert
+              nzType="warning"
+              nzMessage="Hôm nay không có thời gian học"
+              nzShowIcon
+            ></nz-alert>
+          </nz-form-item>
+
+          <nz-form-item *ngIf="faceForm.controls.selectedModule.value">
             <nz-form-label [nzSpan]="null">Giảng Viên</nz-form-label>
             <nz-form-control [nzSpan]="null">
               <input
-                [value]="getDatakey(selectedModule, 'teacher')"
+                [value]="
+                  getDatakey(faceForm.controls.selectedModule.value, 'teacher')
+                "
                 [readonly]="true"
                 nz-input
-                placeholder="Số Ảnh Huấn Luyện"
+                placeholder="GV"
               />
             </nz-form-control>
           </nz-form-item>
 
-          <nz-form-item *ngIf="selectedModule">
+          <nz-form-item *ngIf="faceForm.controls.selectedModule.value">
             <nz-form-label [nzSpan]="null">Số Sinh Viên Đăng Ký</nz-form-label>
             <nz-form-control [nzSpan]="null">
               <input
-                [value]="getDatakey(selectedModule, 'count_student')"
+                [value]="
+                  getDatakey(
+                    faceForm.controls.selectedModule.value,
+                    'count_student'
+                  )
+                "
                 [readonly]="true"
                 nz-input
-                placeholder="Số Ảnh Huấn Luyện"
+                placeholder="Số SV"
               />
             </nz-form-control>
           </nz-form-item>
@@ -96,7 +138,12 @@
           nz-button
           nzType="primary"
           nzShape="round"
-          [disabled]="!readyEnableCamera || !selectedModule"
+          [disabled]="
+            !readyEnableCamera ||
+            !faceForm.controls.selectedModule.value ||
+            !schedule ||
+            !isBetween()
+          "
           *ngIf="!enableCamera"
         >
           <span nz-icon nzType="video-camera" nzTheme="outline"></span>
@@ -156,6 +203,7 @@
                   {{ !list.notFirst ? "Tham gia vào:" : "Vẫn có mặt lúc:" }}
                   <nz-tag [nzColor]="'green'">{{ list.date }}</nz-tag></span
                 >
+                <span *ngIf="list.delay"> (Muộn)</span>
                 <br />
               </span>
             </div>

@@ -16,6 +16,11 @@ import { ToastService } from 'src/app/components/toast/toast.service';
 import { PeriodService } from '../manager/period/period.service';
 import { ModuleService } from '../manager/module/module.service';
 import { FaceRecognitionService } from './face-recognition.service';
+import { FormControl, FormGroup } from '@angular/forms';
+
+import * as isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween);
+
 @Component({
   selector: 'app-face-recognition',
   templateUrl: './face-recognition.component.html',
@@ -47,7 +52,11 @@ export class FaceRecognitionComponent
   currentPeriod?: any;
   moduleData: any[] = [];
 
-  selectedModule?: number;
+  faceForm = new FormGroup({
+    selectedModule: new FormControl(''),
+  });
+
+  schedule: any;
 
   constructor(
     private httpClient: HttpClient,
@@ -68,13 +77,38 @@ export class FaceRecognitionComponent
     this.video = undefined;
   }
 
-  getDatakey(module_id: number, key: string): string {
-    return this.moduleData.filter((val) => (val.id = module_id))[0][key];
+  getDatakey(module_id: any, key: string): string {
+    return this.moduleData.filter((val) => val.id == module_id)[0][key];
+  }
+
+  isBetween() {
+    const currentTime = dayjs().format('HH:mm:ss');
+
+    return (
+      this.schedule &&
+      currentTime >= this.schedule.start_on_day &&
+      currentTime <= this.schedule.end_on_day
+    );
   }
 
   ngOnInit(): void {
     this.getCurrentPeriod();
     this.getListModule();
+  }
+
+  changeDepartment() {
+    this.schedule = undefined;
+    const id = this.faceForm.controls.selectedModule.value;
+    id &&
+      this.moduleService.getSchedule(id).subscribe((wd) => {
+        if (wd.data) {
+          wd.data.map((day: any) => {
+            if (day.weekday_id === dayjs().day()) {
+              this.schedule = day;
+            }
+          });
+        }
+      });
   }
 
   getCurrentPeriod() {
@@ -133,7 +167,9 @@ export class FaceRecognitionComponent
     } else {
       // load model first
       this.httpClient
-        .get<any[]>(`${host}/personal/model/${this.selectedModule}`)
+        .get<any[]>(
+          `${host}/personal/model/${this.faceForm.value.selectedModule}`
+        )
         .subscribe((faceDescriptors) => {
           if (faceDescriptors.length) {
             this.faceDescriptors = this.convertData(faceDescriptors);
@@ -179,6 +215,10 @@ export class FaceRecognitionComponent
 
   createCanvas() {
     this.faceRecognitionService.addRollCallingClass();
+    const delayMax = this.getDatakey(
+      this.faceForm.controls.selectedModule.value,
+      'allow_delay'
+    );
 
     if (this.video) {
       const canvas = faceapi.createCanvas(this.video!);
@@ -218,10 +258,16 @@ export class FaceRecognitionComponent
               .map((val) => val.id)
               .includes(label.substring(0, 10))
           ) {
+            const current = new Date();
+
             this.listUpdate.push({
               id: label.substring(0, 10),
               date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
               originDate: Date.now(),
+              delay:
+                dayjs(
+                  current.setMinutes(current.getMinutes() - Number(delayMax))
+                ).format('HH:mm:ss') > this.schedule.start_on_day,
             });
             this.hasJoinList.push(label.substring(0, 10));
           }

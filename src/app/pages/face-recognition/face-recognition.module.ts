@@ -4,7 +4,7 @@ import { FaceRecognitionComponent } from './face-recognition.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AntDesignModule } from 'src/app/modules/ant-design/ant-design.module';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [FaceRecognitionComponent],
@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
     AntDesignModule,
     RouterModule,
     FormsModule,
+    ReactiveFormsModule,
   ],
   exports: [FaceRecognitionComponent],
 })

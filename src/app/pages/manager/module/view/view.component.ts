@@ -100,12 +100,11 @@ export class ViewComponent {
   getSchedule() {
     this.service.getSchedule(this.moduleId!).subscribe((schedule) => {
       schedule.data.map((sc: any) => {
-        this.weektimes[sc.weekday_id - 1].checked = true;
-        this.weektimes[sc.weekday_id - 1].start = sc.start_on_day.substring(
-          0,
-          5
-        );
-        this.weektimes[sc.weekday_id - 1].end = sc.end_on_day.substring(0, 5);
+        this.weektimes.filter((v) => v.id === sc.weekday_id)[0].checked = true;
+        this.weektimes.filter((v) => v.id === sc.weekday_id)[0].start =
+          sc.start_on_day.substring(0, 5);
+        this.weektimes.filter((v) => v.id === sc.weekday_id)[0].end =
+          sc.end_on_day.substring(0, 5);
       });
     });
   }
@@ -113,13 +112,15 @@ export class ViewComponent {
   generateListTime(): any {
     let arr = [];
     for (let i = 6; i < 24; i++) {
-      for (let j = 0; j < 60; j = j + 15) {
+      for (let j = 0; j < 60; j = j + 10) {
         if (i < 10) {
           if (j == 0) {
             arr.push(`0${i}:${j}0`);
           } else arr.push(`0${i}:${j}`);
         } else {
-          arr.push(`${i}:${j}`);
+          if (j == 0) {
+            arr.push(`${i}:${j}0`);
+          } else arr.push(`${i}:${j}`);
         }
       }
     }

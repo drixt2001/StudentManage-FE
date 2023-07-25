@@ -21,6 +21,10 @@ nz-header {
   width: 100%;
   z-index: 1000;
   background-color: #fff;
+
+  ul li {
+    font-weight: 500;
+  }
 }
 
 [nz-menu] {

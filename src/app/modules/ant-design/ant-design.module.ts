@@ -28,6 +28,7 @@ import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 @NgModule({
   declarations: [],
@@ -61,6 +62,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzCheckboxModule,
     NzProgressModule,
     NzDropDownModule,
+    NzAlertModule,
   ],
   exports: [
     NzLayoutModule,
@@ -91,6 +93,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzCheckboxModule,
     NzProgressModule,
     NzDropDownModule,
+    NzAlertModule,
   ],
 })
 export class AntDesignModule {}
