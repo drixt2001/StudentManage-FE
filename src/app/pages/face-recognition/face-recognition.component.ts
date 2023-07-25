@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   Component,
   DoCheck,
+  HostListener,
   OnDestroy,
   OnInit,
 } from '@angular/core';
@@ -57,6 +58,9 @@ export class FaceRecognitionComponent
   ) {}
 
   ngOnDestroy(): void {
+    if (this.enableCamera) {
+      this.faceRecognitionService.removeRollCallingClass();
+    }
     this.stopCam();
     document.getElementById('canvas')?.remove();
     clearInterval(this.canvasInterval);
@@ -121,6 +125,7 @@ export class FaceRecognitionComponent
 
   toggleCam() {
     if (this.enableCamera) {
+      this.faceRecognitionService.removeRollCallingClass();
       this.stopCam();
       document.getElementById('canvas')?.remove();
       clearInterval(this.canvasInterval);
@@ -147,7 +152,7 @@ export class FaceRecognitionComponent
                       ) as HTMLVideoElement;
 
                       this.createCanvas();
-                      this.faceRecognitionService.addRollCallingClass();
+
                       clearInterval(setCamera);
                     }
                   }, 25);
@@ -162,16 +167,17 @@ export class FaceRecognitionComponent
   }
 
   async stopCam() {
-    this.faceRecognitionService.removeRollCallingClass();
     await this.srcObject?.getTracks().forEach(function (track) {
       if (track.readyState == 'live' && track.kind === 'video') {
         track.stop();
       }
     });
+
     this.enableCamera = false;
   }
 
   createCanvas() {
+    this.faceRecognitionService.addRollCallingClass();
     this.video?.addEventListener('playing', () => {
       if (this.video) {
         const canvas = faceapi.createCanvas(this.video!);
@@ -267,5 +273,12 @@ export class FaceRecognitionComponent
       );
     }
     return faceDescriptorsArray;
+  }
+
+  @HostListener('window:beforeunload')
+  onBeforeUnload() {
+    if (this.enableCamera) {
+      this.faceRecognitionService.removeRollCallingClass();
+    }
   }
 }

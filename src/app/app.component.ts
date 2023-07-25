@@ -1,6 +1,7 @@
 import { Component, DoCheck, OnInit } from '@angular/core';
 import { check, face } from './modules/face-api/face-api';
 import { Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +12,16 @@ export class AppComponent implements OnInit, DoCheck {
   title = 'quanlysinhvien';
   canActive = false;
   percent = 0;
+  token: string = '';
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.getFaceAPIModel();
+    this.token = localStorage.getItem('token') || '';
+    if (!this.token) {
+      this.router.navigate(['/login']);
+    }
   }
 
   ngDoCheck(): void {

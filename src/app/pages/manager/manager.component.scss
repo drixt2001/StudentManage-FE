@@ -5,11 +5,11 @@
 .logo {
   width: 120px;
   height: 31px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(230, 230, 230, 0.2);
   margin: 16px 24px 16px 0;
   float: left;
 
-  color: white;
+  color: cadetblue;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,6 +20,7 @@ nz-header {
   position: fixed;
   width: 100%;
   z-index: 1000;
+  background-color: #fff;
 }
 
 [nz-menu] {
@@ -43,4 +44,17 @@ nz-breadcrumb {
 
 nz-footer {
   text-align: center;
+}
+
+.bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  padding-bottom: 1px;
+
+  &.right {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

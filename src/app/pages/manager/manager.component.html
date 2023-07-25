@@ -1,20 +1,67 @@
 <nz-layout class="layout">
   <nz-header>
-    <div class="logo">Điểm Danh</div>
-    <ul nz-menu nzTheme="dark" nzMode="horizontal">
-      <li nz-menu-item routerLink="/quanly/canhan">Dữ Liệu Cá Nhân</li>
-      <li nz-menu-item routerLink="/quanly/hocky">Quản Lý Học Kỳ</li>
-      <li nz-menu-item routerLink="/quanly/hocphan">Quản Lý Học Phần</li>
-      <li nz-menu-item routerLink="/face-recognition" target="_blank">
-        Quét Điểm Danh
-      </li>
-      <li nz-menu-item routerLink="/face-recognition">Thống Kê - Báo Cáo</li>
+    <div class="logo">
+      <span
+        style="margin-right: 0.5rem"
+        nz-icon
+        nzType="expand"
+        nzTheme="outline"
+      ></span>
+      Điểm Danh
+    </div>
+    <ul style="display: flex" nz-menu nzTheme="light" nzMode="horizontal">
+      <div class="bar left">
+        <li nz-menu-item routerLink="/quanly/canhan">
+          <span nz-icon nzType="team" nzTheme="outline"></span>
+          <span>Dữ Liệu Cá Nhân</span>
+        </li>
+        <li nz-menu-item routerLink="/quanly/hocky">
+          <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+          <span>Quản Lý Học Kỳ</span>
+        </li>
+        <li nz-menu-item routerLink="/quanly/hocphan">
+          <span nz-icon nzType="book" nzTheme="outline"></span
+          ><span>Quản Lý Học Phần</span>
+        </li>
+        <li nz-menu-item routerLink="/face-recognition">
+          <span nz-icon nzType="line-chart" nzTheme="outline"></span
+          ><span>Thống Kê - Báo Cáo</span>
+        </li>
+      </div>
+
+      <div class="bar right">
+        <li nz-menu-item (click)="openFaceRecognition()">
+          <span nz-icon nzType="scan" nzTheme="outline"></span>
+          <span>Quét Điểm Danh</span>
+        </li>
+
+        <li
+          nz-menu-item
+          nz-dropdown
+          [nzDropdownMenu]="menu"
+          nzPlacement="bottomRight"
+        >
+          <span>Role: Username</span>
+
+          <span
+            style="margin-left: 0.5rem"
+            nz-icon
+            nzType="user"
+            nzTheme="outline"
+          ></span>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li (click)="logout()" nz-menu-item>Đăng Xuất</li>
+            </ul>
+          </nz-dropdown-menu>
+        </li>
+      </div>
     </ul>
   </nz-header>
   <nz-content>
     <nz-breadcrumb nz-page-header-breadcrumb>
-      <nz-breadcrumb-item>
-        <a routerLink="/quanly">Trang Chủ</a>
+      <nz-breadcrumb-item *ngFor="let br of listBreadcrumms">
+        <a routerLink="{{ br.link }}">{{ br.name }}</a>
       </nz-breadcrumb-item>
     </nz-breadcrumb>
     <div class="inner-content">

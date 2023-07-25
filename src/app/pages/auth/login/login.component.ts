@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { LoginService } from './login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,8 +10,17 @@ import { LoginService } from './login.service';
 })
 export class LoginComponent {
   hide = true;
-  ngOnInit(): void {}
-  constructor(private loginService: LoginService) {}
+  token: string = '';
+
+  constructor(private loginService: LoginService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.token = localStorage.getItem('token') || '';
+    if (this.token) {
+      this.router.navigate(['/quanly']);
+    }
+  }
+
   emailFormControl = new FormControl('', [
     Validators.required,
     Validators.email,
