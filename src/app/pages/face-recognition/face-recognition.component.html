@@ -135,7 +135,7 @@
             <button
               nzType="primary"
               style="margin-top: 1rem"
-              *ngIf="enableCamera"
+              *ngIf="faceForm.controls.selectedModule.value"
               (click)="handleOpen()"
               nz-button
             >
