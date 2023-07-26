@@ -32,14 +32,14 @@
           nz-form
         >
           <nz-form-item>
-            <nz-form-label [nzSpan]="null">Học Phần</nz-form-label>
+            <nz-form-label [nzSpan]="null">Học phần</nz-form-label>
             <nz-form-control [nzSpan]="null">
               <nz-select
                 formControlName="selectedModule"
                 nzShowSearch
                 nzAllowClear
                 nzPlaceHolder="Chọn học phần"
-                (ngModelChange)="changeDepartment()"
+                (ngModelChange)="changeModule()"
               >
                 <nz-option
                   *ngFor="let module of moduleData"
@@ -115,18 +115,37 @@
             <nz-form-label [nzSpan]="null"
               >Số phút lặp lại kiểm tra</nz-form-label
             >
-            <nz-form-control [nzSpan]="null"
-              ><nz-input-number
+            <nz-form-control [nzSpan]="null">
+              <nz-select
+                [disabled]="this.enableCamera"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="timeRepeatCheck"
-                [nzMin]="1"
-                [nzMax]="20"
-                [nzStep]="1"
-              ></nz-input-number
-            ></nz-form-control>
+                nzShowSearch
+                nzPlaceHolder="Chọn khoảng thời gian"
+                (ngModelChange)="changeReatTime()"
+              >
+                <nz-option
+                  *ngFor="let checkTime of listRepeatCheckTime"
+                  [nzLabel]="checkTime"
+                  [nzValue]="checkTime"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+
+            <button
+              nzType="primary"
+              style="margin-top: 1rem"
+              *ngIf="enableCamera"
+              (click)="handleOpen()"
+              nz-button
+            >
+              <span nz-icon nzType="eye" nzTheme="outline"></span>
+              Xem Dữ Liệu Điểm Danh
+            </button>
           </nz-form-item>
         </form>
       </div>
+
       <div class="button-bar">
         <button routerLink="/quanly" nz-button>
           <span nz-icon nzType="left"></span>
@@ -151,12 +170,17 @@
         </button>
 
         <button
-          (click)="toggleCam()"
           nz-button
           nzDanger
           nzType="primary"
           nzShape="round"
           *ngIf="enableCamera"
+          nz-popconfirm
+          nzPopconfirmTitle="Xác nhận dừng điểm danh và đồng bộ dữ liệu"
+          [nzBeforeConfirm]="beforeConfirm"
+          (nzOnConfirm)="confirmFinish()"
+          nz-button
+          nzType="primary"
         >
           <span nz-icon nzType="video-camera" nzTheme="outline"></span>
           <span>Dừng Điểm Danh</span>
@@ -213,3 +237,62 @@
     </nz-content>
   </nz-layout>
 </nz-layout>
+
+<nz-modal
+  nzCentered
+  nzWidth="50%"
+  [nzFooter]="modalFooter"
+  [(nzVisible)]="isVisibleModal"
+  (nzOnCancel)="handleCancel()"
+  nzTitle="Xem Dữ Liệu Điểm Danh"
+>
+  <ng-container *nzModalContent>
+    <nz-table
+      nzBordered
+      [nzShowPagination]="false"
+      #t
+      [nzData]="listStudent"
+      nzSize="small"
+    >
+      <thead>
+        <tr>
+          <th>MSV</th>
+          <th>Tên</th>
+          <th>Ngày Sinh</th>
+          <th>Tham Gia (%)</th>
+          <th>Đi Muộn</th>
+          <th>Vắng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of t.data">
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>
+            <nz-tag>{{ data.birthday | date : "dd/MM/yyyy" }}</nz-tag>
+          </td>
+          <td>{{ summary(data.id)[0] }}</td>
+          <td>
+            <span
+              *ngIf="summary(data.id)[1]"
+              nz-icon
+              nzType="check"
+              nzTheme="outline"
+            ></span>
+          </td>
+          <td>
+            <span
+              *ngIf="summary(data.id)[2]"
+              nz-icon
+              nzType="check"
+              nzTheme="outline"
+            ></span>
+          </td>
+        </tr>
+      </tbody> </nz-table
+  ></ng-container>
+
+  <ng-template #modalFooter>
+    <button (click)="handleCancel()" nz-button nzType="default">Đóng</button>
+  </ng-template>
+</nz-modal>

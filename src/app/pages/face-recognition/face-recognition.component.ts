@@ -17,6 +17,7 @@ import { PeriodService } from '../manager/period/period.service';
 import { ModuleService } from '../manager/module/module.service';
 import { FaceRecognitionService } from './face-recognition.service';
 import { FormControl, FormGroup } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import * as isBetween from 'dayjs/plugin/isBetween';
 dayjs.extend(isBetween);
@@ -43,7 +44,10 @@ export class FaceRecognitionComponent
   listUpdate: any[] = [];
   hasJoinList: any[] = [];
 
-  timeRepeatCheck = 1;
+  timeRepeatCheck = 5;
+  countCheck = 0;
+  currentProgress = 0;
+
   timenow: string = dayjs(Date.now()).format('HH:mm:ss DD/MM/YYYY');
   timeInterval = setInterval(() => {
     this.timenow = dayjs(Date.now()).format('HH:mm:ss DD/MM/YYYY');
@@ -51,6 +55,7 @@ export class FaceRecognitionComponent
 
   currentPeriod?: any;
   moduleData: any[] = [];
+  listRepeatCheckTime = [0.5, 1, 5, 10, 25, 30];
 
   faceForm = new FormGroup({
     selectedModule: new FormControl(''),
@@ -58,12 +63,15 @@ export class FaceRecognitionComponent
 
   schedule: any;
 
+  listStudent: any[] = [];
+
   constructor(
     private httpClient: HttpClient,
     private toast: ToastService,
     private periodService: PeriodService,
     private moduleService: ModuleService,
-    private faceRecognitionService: FaceRecognitionService
+    private faceRecognitionService: FaceRecognitionService,
+    private nzMessageService: NzMessageService
   ) {}
 
   ngOnDestroy(): void {
@@ -96,7 +104,7 @@ export class FaceRecognitionComponent
     this.getListModule();
   }
 
-  changeDepartment() {
+  changeModule() {
     this.schedule = undefined;
     const id = this.faceForm.controls.selectedModule.value;
     id &&
@@ -105,10 +113,75 @@ export class FaceRecognitionComponent
           wd.data.map((day: any) => {
             if (day.weekday_id === dayjs().day()) {
               this.schedule = day;
+              this.changeReatTime();
             }
           });
         }
       });
+
+    id &&
+      this.moduleService.getOne(id).subscribe((module) => {
+        if (module.data.students) this.listStudent = module.data.students;
+      });
+  }
+
+  changeReatTime() {
+    if (this.schedule) {
+      const totalHour =
+        this.getHourOrMinute(0, this.schedule.end_on_day) -
+        this.getHourOrMinute(0, this.schedule.start_on_day);
+      const totalMinute =
+        this.getHourOrMinute(1, this.schedule.end_on_day) -
+        this.getHourOrMinute(1, this.schedule.start_on_day);
+
+      const totalTimeCheck = totalHour * 60 + totalMinute;
+
+      this.countCheck =
+        totalTimeCheck >= 0 ? totalTimeCheck / this.timeRepeatCheck : 0;
+    }
+  }
+
+  getProgressCheck() {
+    if (this.schedule) {
+      const date = new Date();
+      const cHour =
+        date.getHours() - this.getHourOrMinute(0, this.schedule.start_on_day);
+      const cMinute =
+        date.getMinutes() - this.getHourOrMinute(1, this.schedule.start_on_day);
+      const cSecond =
+        date.getSeconds() - this.getHourOrMinute(2, this.schedule.start_on_day);
+
+      const cTotal = cHour * 60 * 60 + cMinute * 60 + cSecond;
+      const progressTime = Math.floor(cTotal / (this.timeRepeatCheck * 60)) + 1;
+
+      return progressTime;
+    }
+    return 0;
+  }
+
+  summary(studentsSid: string) {
+    let percent = 0;
+    let delay = false;
+    let leave = false;
+
+    const lastItem = [...this.listUpdate]
+      .reverse()
+      .find((el) => el.id === studentsSid);
+
+    if (lastItem?.countJoin) {
+      percent = (lastItem.countJoin / this.countCheck) * 100;
+    }
+    if (lastItem?.isDelayDay) {
+      delay = true;
+    }
+
+    if (percent === 0) leave = true;
+    return [percent.toFixed(1), delay, leave];
+  }
+
+  getHourOrMinute(option: number, time: string) {
+    // 0 hour 1 minute
+    return Number(time.split(':')[option]);
   }
 
   getCurrentPeriod() {
@@ -252,44 +325,51 @@ export class FaceRecognitionComponent
             .findBestMatch(detection.descriptor)
             .toString();
 
-          if (
-            label.substring(0, 7) !== 'unknown' &&
-            !this.listUpdate
-              .map((val) => val.id)
-              .includes(label.substring(0, 10))
-          ) {
-            const current = new Date();
+          const isUnknown = label.substring(0, 7) === 'unknown';
+          const id = !isUnknown ? label.substring(0, 10) : undefined;
 
-            this.listUpdate.push({
-              id: label.substring(0, 10),
+          const current = new Date();
+          const isDelay =
+            dayjs(
+              current.setMinutes(current.getMinutes() - Number(delayMax))
+            ).format('HH:mm:ss') > this.schedule.start_on_day;
+
+          const firstJoin = !this.hasJoinList.includes(id);
+
+          // is first join
+          if (id && firstJoin) {
+            const person = {
+              id: id,
               date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
-              originDate: Date.now(),
-              delay:
-                dayjs(
-                  current.setMinutes(current.getMinutes() - Number(delayMax))
-                ).format('HH:mm:ss') > this.schedule.start_on_day,
-            });
-            this.hasJoinList.push(label.substring(0, 10));
+              originDate: current,
+              delay: isDelay,
+              isDelayDay: isDelay,
+              countJoin: 1,
+              progressCheck: this.getProgressCheck(),
+            };
+
+            this.listUpdate.push(person);
+            this.hasJoinList.push(id);
           }
 
-          if (
-            label.substring(0, 7) !== 'unknown' &&
-            this.hasJoinList.includes(label.substring(0, 10))
-          ) {
-            const index = [...this.listUpdate]
+          // not first join
+          if (id && !firstJoin) {
+            const lastItem = [...this.listUpdate]
               .reverse()
-              .find((val) => (val.id = label.substring(0, 10)));
+              .find((el) => el.id === id);
 
-            if (
-              Date.now() - index.originDate >
-              this.timeRepeatCheck * 60 * 1000
-            ) {
-              this.listUpdate.push({
-                id: label.substring(0, 10),
+            if (lastItem && lastItem.progressCheck < this.getProgressCheck()) {
+              const person = {
+                ...lastItem,
+                delay: undefined,
                 date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
-                originDate: Date.now(),
+                originDate: current,
+                countJoin: lastItem.countJoin + 1,
+                progressCheck: this.getProgressCheck(),
                 notFirst: true,
-              });
+              };
+
+              this.listUpdate.push(person);
             }
           }
 
@@ -321,6 +401,37 @@ export class FaceRecognitionComponent
     return faceDescriptorsArray;
   }
 
+  // modal
+
+  isVisibleModal = false;
+
+  handleCancel() {
+    this.isVisibleModal = false;
+  }
+
+  handleOpen() {
+    this.isVisibleModal = true;
+  }
+
+  confirmFinish(): void {
+    this.toggleCam();
+    this.isVisibleModal = true;
+    this.faceRecognitionService.sendResult({
+      id: this.faceForm.controls.selectedModule.value,
+      data: this.listUpdate,
+    });
+  }
+
+  beforeConfirm(): Observable<boolean> {
+    return new Observable((observer) => {
+      setTimeout(() => {
+        observer.next(true);
+        observer.complete();
+      }, 3000);
+    });
+  }
+
+  // window
   @HostListener('window:beforeunload')
   onBeforeUnload() {
     if (this.enableCamera) {

@@ -7,6 +7,9 @@ import { Socket } from 'ngx-socket-io';
 export class FaceRecognitionService {
   constructor(private socket: Socket) {}
 
+  activeClass = this.socket.fromEvent<any>('get');
+  result = this.socket.fromEvent<any>('get');
+
   addRollCallingClass() {
     this.socket.emit('addRollCallingClass', Date.now().toString());
   }
@@ -19,5 +22,7 @@ export class FaceRecognitionService {
     this.socket.emit('sendGet', Date.now().toString());
   }
 
-  activeUsers$ = this.socket.fromEvent<any>('get');
+  sendResult(data: any) {
+    this.socket.emit('sendResult', data);
+  }
 }

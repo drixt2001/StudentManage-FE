@@ -29,7 +29,7 @@ export class DashboardComponent implements OnDestroy, AfterViewInit {
     this.initChart();
 
     this.faceRecognitionService.sendGet();
-    this.faceRecognitionService.activeUsers$.subscribe((val) => {
+    this.faceRecognitionService.activeClass.subscribe((val) => {
       this.onlineClass = val;
       this.listLabels.push(dayjs().format('HH:mm:ss DD/MM/YYYY'));
       this.listCountClass.push(this.onlineClass);
