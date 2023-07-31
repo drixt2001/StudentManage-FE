@@ -262,6 +262,40 @@
             ></nz-input-number>
           </nz-form-control>
         </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null"
+            >Số Phần Trăm Tham Gia Yêu Cầu Trong Mỗi Buổi Học</nz-form-label
+          >
+          <nz-form-control [nzSpan]="null">
+            <nz-input-number
+              style="width: 100%"
+              formControlName="allow_min_percent"
+              [nzMin]="50"
+              [nzMax]="100"
+              [nzStep]="5"
+            ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null"
+            >Số Phút Lặp Lại Điểm Danh Trong Mỗi Buổi Học</nz-form-label
+          >
+          <nz-form-control [nzSpan]="null">
+            <nz-select
+              nzShowSearch
+              nzPlaceHolder="Chọn khoảng thời gian"
+              formControlName="time_repeat_check"
+            >
+              <nz-option
+                *ngFor="let checkTime of listRepeatCheckTime"
+                [nzLabel]="checkTime"
+                [nzValue]="checkTime"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
       </form>
       <button
         style="margin-top: 1rem"

@@ -93,57 +93,67 @@
               />
             </nz-form-control>
           </nz-form-item>
-
-          <nz-form-item *ngIf="faceForm.controls.selectedModule.value">
-            <nz-form-label [nzSpan]="null">Số Sinh Viên Đăng Ký</nz-form-label>
-            <nz-form-control [nzSpan]="null">
-              <input
-                [value]="
-                  getDatakey(
-                    faceForm.controls.selectedModule.value,
-                    'count_student'
-                  )
-                "
-                [readonly]="true"
-                nz-input
-                placeholder="Số SV"
-              />
-            </nz-form-control>
-          </nz-form-item>
-
-          <nz-form-item>
-            <nz-form-label [nzSpan]="null"
-              >Số phút lặp lại kiểm tra</nz-form-label
-            >
-            <nz-form-control [nzSpan]="null">
-              <nz-select
-                [disabled]="this.enableCamera"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="timeRepeatCheck"
-                nzShowSearch
-                nzPlaceHolder="Chọn khoảng thời gian"
-                (ngModelChange)="changeReatTime()"
-              >
-                <nz-option
-                  *ngFor="let checkTime of listRepeatCheckTime"
-                  [nzLabel]="checkTime"
-                  [nzValue]="checkTime"
-                ></nz-option>
-              </nz-select>
-            </nz-form-control>
-
-            <button
-              nzType="primary"
-              style="margin-top: 1rem"
-              *ngIf="faceForm.controls.selectedModule.value"
-              (click)="handleOpen()"
-              nz-button
-            >
-              <span nz-icon nzType="eye" nzTheme="outline"></span>
-              Xem Dữ Liệu Điểm Danh
-            </button>
-          </nz-form-item>
         </form>
+
+        <div class="span" style="display: flex; justify-content: space-between">
+          <form
+            [formGroup]="faceForm"
+            nzLayout="vertical"
+            style="width: 48%"
+            nz-form
+          >
+            <nz-form-item *ngIf="faceForm.controls.selectedModule.value">
+              <nz-form-label [nzSpan]="null"
+                >Số Sinh Viên Đăng Ký</nz-form-label
+              >
+              <nz-form-control [nzSpan]="null">
+                <input
+                  [value]="
+                    getDatakey(
+                      faceForm.controls.selectedModule.value,
+                      'count_student'
+                    )
+                  "
+                  [readonly]="true"
+                  nz-input
+                  placeholder="Số SV"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+
+          <form
+            [formGroup]="faceForm"
+            nzLayout="vertical"
+            style="width: 48%"
+            nz-form
+          >
+            <nz-form-item *ngIf="faceForm.controls.selectedModule.value">
+              <nz-form-label [nzSpan]="null"
+                >Số phút lặp lại kiểm tra</nz-form-label
+              >
+              <nz-form-control [nzSpan]="null">
+                <input
+                  [value]="this.timeRepeatCheck"
+                  [readonly]="true"
+                  nz-input
+                  placeholder="Số SV"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+        </div>
+
+        <button
+          style="width: 100%"
+          nzType="primary"
+          *ngIf="faceForm.controls.selectedModule.value"
+          (click)="handleOpen()"
+          nz-button
+        >
+          <span nz-icon nzType="eye" nzTheme="outline"></span>
+          Xem Dữ Liệu Điểm Danh
+        </button>
       </div>
 
       <div class="button-bar">
@@ -177,7 +187,6 @@
           *ngIf="enableCamera"
           nz-popconfirm
           nzPopconfirmTitle="Xác nhận dừng điểm danh và đồng bộ dữ liệu"
-          [nzBeforeConfirm]="beforeConfirm"
           (nzOnConfirm)="confirmFinish()"
           nz-button
           nzType="primary"
@@ -271,10 +280,10 @@
           <td>
             <nz-tag>{{ data.birthday | date : "dd/MM/yyyy" }}</nz-tag>
           </td>
-          <td>{{ summary(data.id)[0] }}</td>
+          <td>{{ data.percentJoin }}</td>
           <td>
             <span
-              *ngIf="summary(data.id)[1]"
+              *ngIf="data.isDelay"
               nz-icon
               nzType="check"
               nzTheme="outline"
@@ -282,7 +291,7 @@
           </td>
           <td>
             <span
-              *ngIf="summary(data.id)[2]"
+              *ngIf="data.isLeave"
               nz-icon
               nzType="check"
               nzTheme="outline"

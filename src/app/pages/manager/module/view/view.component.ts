@@ -28,6 +28,7 @@ export class ViewComponent {
   weektimes: any[] = [];
   initWeektimes: any[] = [];
   currentTime: any[] = [];
+  listRepeatCheckTime = [0.5, 1, 5, 10, 25, 30];
 
   moduleForm = new FormGroup({
     sid: new FormControl('', [Validators.required]),
@@ -38,6 +39,8 @@ export class ViewComponent {
     credit: new FormControl(0, [Validators.required]),
     allow_leaving: new FormControl(0),
     allow_delay: new FormControl(0),
+    allow_min_percent: new FormControl(0),
+    time_repeat_check: new FormControl(0),
   });
 
   constructor(
@@ -81,6 +84,8 @@ export class ViewComponent {
       .updateAllow(this.moduleId!, {
         allow_delay: this.moduleForm.value.allow_delay,
         allow_leaving: this.moduleForm.value.allow_leaving,
+        allow_min_percent: this.moduleForm.value.allow_min_percent,
+        time_repeat_check: this.moduleForm.value.time_repeat_check,
       })
       .subscribe(() => {
         this.toast.open('Cập nhật điều kiện thành công', 'success');

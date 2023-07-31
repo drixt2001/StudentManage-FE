@@ -7,5 +7,9 @@
 }
 
 .time {
-  margin-top: 0.5rem;
+  margin-top: 1rem;
+
+  &:last-of-type {
+    margin-bottom: 1.5rem;
+  }
 }

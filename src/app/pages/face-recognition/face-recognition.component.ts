@@ -8,7 +8,7 @@ import {
   OnInit,
 } from '@angular/core';
 import * as faceapi from 'face-api.js';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription, of, take, takeUntil } from 'rxjs';
 import { face } from '../../modules/face-api/face-api';
 import * as dayjs from 'dayjs';
 import { host } from '../../config/host';
@@ -44,9 +44,10 @@ export class FaceRecognitionComponent
   listUpdate: any[] = [];
   hasJoinList: any[] = [];
 
-  timeRepeatCheck = 5;
+  timeRepeatCheck = 0;
   countCheck = 0;
   currentProgress = 0;
+  initProgressTime = 0;
 
   timenow: string = dayjs(Date.now()).format('HH:mm:ss DD/MM/YYYY');
   timeInterval = setInterval(() => {
@@ -55,7 +56,6 @@ export class FaceRecognitionComponent
 
   currentPeriod?: any;
   moduleData: any[] = [];
-  listRepeatCheckTime = [0.5, 1, 5, 10, 25, 30];
 
   faceForm = new FormGroup({
     selectedModule: new FormControl(''),
@@ -64,6 +64,11 @@ export class FaceRecognitionComponent
   schedule: any;
 
   listStudent: any[] = [];
+
+  initRollCallId: number | undefined;
+
+  sub: Subscription = new Subscription();
+  sendData: any[] = [];
 
   constructor(
     private httpClient: HttpClient,
@@ -83,9 +88,10 @@ export class FaceRecognitionComponent
     clearInterval(this.canvasInterval);
     clearInterval(this.timeInterval);
     this.video = undefined;
+    this.sub.unsubscribe();
   }
 
-  getDatakey(module_id: any, key: string): string {
+  getDatakey(module_id: any, key: string): any {
     return this.moduleData.filter((val) => val.id == module_id)[0][key];
   }
 
@@ -102,27 +108,122 @@ export class FaceRecognitionComponent
   ngOnInit(): void {
     this.getCurrentPeriod();
     this.getListModule();
+
+    this.fetchRollCallData();
   }
 
   changeModule() {
     this.schedule = undefined;
     const id = this.faceForm.controls.selectedModule.value;
-    id &&
-      this.moduleService.getSchedule(id).subscribe((wd) => {
-        if (wd.data) {
-          wd.data.map((day: any) => {
-            if (day.weekday_id === dayjs().day()) {
-              this.schedule = day;
-              this.changeReatTime();
-            }
-          });
-        }
-      });
+
+    this.timeRepeatCheck =
+      id &&
+      this.getDatakey(
+        this.faceForm.controls.selectedModule.value,
+        'time_repeat_check'
+      );
 
     id &&
-      this.moduleService.getOne(id).subscribe((module) => {
-        if (module.data.students) this.listStudent = module.data.students;
-      });
+      this.sub.add(
+        this.moduleService.getSchedule(id).subscribe((wd) => {
+          if (wd.data) {
+            wd.data.map((day: any) => {
+              if (day.weekday_id === dayjs().day()) {
+                this.schedule = day;
+                this.changeReatTime();
+                this.faceRecognitionService.checkCurrentRollCall({
+                  module_id: id,
+                  weekday_id: day.weekday_id,
+                  date: dayjs().format('YYYY-MM-DD'),
+                });
+              }
+            });
+          }
+        })
+      );
+
+    id &&
+      this.sub.add(
+        this.moduleService.getOne(id).subscribe((module) => {
+          if (module.data.students) this.listStudent = module.data.students;
+        })
+      );
+
+    this.sub.add(
+      this.faceRecognitionService.currentRollCall
+        .pipe(take(1))
+        .subscribe(async (initData) => {
+          if (!initData) {
+            this.faceRecognitionService.addCurrentRollCall({
+              module_id: id,
+              weekday_id: dayjs().day(),
+              date: dayjs().format('YYYY-MM-DD'),
+            });
+            this.faceRecognitionService.idAddCurrentRollCall
+              .pipe(take(1))
+              .subscribe(async (val) => {
+                this.initRollCallId = val;
+                await this.updateData();
+              });
+          } else {
+            this.initRollCallId = initData.id;
+            this.getData();
+          }
+        })
+    );
+  }
+
+  getData() {
+    this.faceRecognitionService.getResult({
+      id: this.initRollCallId,
+    });
+  }
+  async updateData() {
+    this.sendData = this.listStudent.map((st) => {
+      return {
+        ...st,
+        minuteJoin: this.summary(st.id)[3],
+        percentJoin: this.summary(st.id)[0],
+        isDelay: this.summary(st.id)[1],
+        isLeave: this.summary(st.id)[2],
+      };
+    });
+
+    this.initRollCallId &&
+      (await this.faceRecognitionService.sendResult({
+        rollCallId: this.initRollCallId,
+        moduleId: this.faceForm.value.selectedModule,
+        data: [...this.sendData],
+      }));
+
+    console.log('upadte call', this.sendData);
+  }
+
+  fetchRollCallData() {
+    this.sub.add(
+      this.faceRecognitionService.resultRollCalling
+        .pipe()
+        .subscribe(async (rs: any[]) => {
+          if (rs) {
+            const newList = await this.listStudent.map((st) => {
+              const mapSt = rs.find(
+                (rsSt) => rsSt.student_id === st.student_id
+              );
+
+              return {
+                ...st,
+                minuteJoin: mapSt?.minute_join,
+                percentJoin: mapSt?.total_percent,
+                isDelay: mapSt?.delay,
+                isLeave: mapSt?.leave,
+              };
+            });
+
+            this.listStudent = newList;
+            console.log('new list update', this.listStudent);
+          }
+        })
+    );
   }
 
   changeReatTime() {
@@ -152,31 +253,68 @@ export class FaceRecognitionComponent
         date.getSeconds() - this.getHourOrMinute(2, this.schedule.start_on_day);
 
       const cTotal = cHour * 60 * 60 + cMinute * 60 + cSecond;
-      const progressTime = Math.floor(cTotal / (this.timeRepeatCheck * 60)) + 1;
 
-      return progressTime;
+      if (
+        dayjs(date)
+          .set('minute', dayjs(date).minute() - 1)
+          .format('HH:mm:ss') < this.schedule.end_on_day
+      ) {
+        const progressTime =
+          Math.floor(cTotal / (this.timeRepeatCheck * 60)) + 1;
+
+        if (this.initProgressTime < progressTime) {
+          this.updateData();
+
+          this.initProgressTime = progressTime;
+        }
+
+        return progressTime;
+      } else {
+        return 0;
+      }
     }
     return 0;
   }
 
-  summary(studentsSid: string) {
+  summary(studentSid: string) {
     let percent = 0;
+    let minuteJoin = 0;
     let delay = false;
-    let leave = false;
+    let leave = true;
 
     const lastItem = [...this.listUpdate]
       .reverse()
-      .find((el) => el.id === studentsSid);
+      .find((el) => el.id === studentSid);
 
-    if (lastItem?.countJoin) {
-      percent = (lastItem.countJoin / this.countCheck) * 100;
-    }
-    if (lastItem?.isDelayDay) {
-      delay = true;
+    const previousValue = [...this.listStudent].find(
+      (st) => st.id === studentSid
+    );
+
+    if (!lastItem) {
+      percent = previousValue.percentJoin ?? 0;
+      minuteJoin = previousValue.minuteJoin ?? 0;
+      delay = previousValue.isDelay ?? false;
+      leave = previousValue.isLeave ?? true;
+    } else {
+      if (lastItem?.totalTimeJoin) {
+        percent =
+          (lastItem.totalTimeJoin / (this.countCheck * this.timeRepeatCheck)) *
+          100;
+        minuteJoin = lastItem.totalTimeJoin;
+      }
+      if (lastItem?.isDelayDay) {
+        delay = true;
+      }
     }
 
-    if (percent === 0) leave = true;
-    return [percent.toFixed(1), delay, leave];
+    const minPercent = this.getDatakey(
+      this.faceForm.controls.selectedModule.value,
+      'allow_min_percent'
+    );
+
+    if (percent >= minPercent) leave = false;
+    if (percent > 100) percent = 100;
+    return [percent.toFixed(1), delay, leave, minuteJoin];
   }
 
   getHourOrMinute(option: number, time: string) {
@@ -335,6 +473,9 @@ export class FaceRecognitionComponent
             ).format('HH:mm:ss') > this.schedule.start_on_day;
 
           const firstJoin = !this.hasJoinList.includes(id);
+          const previousValue = [...this.listStudent].filter(
+            (st) => st.id === id
+          )[0];
 
           // is first join
           if (id && firstJoin) {
@@ -345,6 +486,7 @@ export class FaceRecognitionComponent
               delay: isDelay,
               isDelayDay: isDelay,
               countJoin: 1,
+              totalTimeJoin: previousValue.minuteJoin + this.timeRepeatCheck,
               progressCheck: this.getProgressCheck(),
             };
 
@@ -365,6 +507,7 @@ export class FaceRecognitionComponent
                 date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
                 originDate: current,
                 countJoin: lastItem.countJoin + 1,
+                totalTimeJoin: lastItem.totalTimeJoin + this.timeRepeatCheck,
                 progressCheck: this.getProgressCheck(),
                 notFirst: true,
               };
@@ -417,17 +560,9 @@ export class FaceRecognitionComponent
     this.toggleCam();
     this.isVisibleModal = true;
     this.faceRecognitionService.sendResult({
-      id: this.faceForm.controls.selectedModule.value,
-      data: this.listUpdate,
-    });
-  }
-
-  beforeConfirm(): Observable<boolean> {
-    return new Observable((observer) => {
-      setTimeout(() => {
-        observer.next(true);
-        observer.complete();
-      }, 3000);
+      rollCallId: this.initRollCallId,
+      moduleId: this.faceForm.value.selectedModule,
+      data: [...this.sendData],
     });
   }
 
