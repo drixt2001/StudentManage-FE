@@ -30,6 +30,8 @@ dayjs.extend(isBetween);
 export class FaceRecognitionComponent
   implements OnInit, AfterViewInit, DoCheck, OnDestroy
 {
+  listCamera: any[] = [];
+  selectedCamera: any;
   srcObject?: MediaStream;
   enableCamera = false;
   readyEnableCamera = false;
@@ -106,6 +108,7 @@ export class FaceRecognitionComponent
   }
 
   ngOnInit(): void {
+    this.getCameraSelection();
     this.getCurrentPeriod();
     this.getListModule();
 
@@ -358,15 +361,47 @@ export class FaceRecognitionComponent
   }
 
   async getCamera(): Promise<void> {
+    const constraints = {
+      video: {
+        width: {
+          min: 1280,
+          ideal: 1920,
+          max: 2560,
+        },
+        height: {
+          min: 720,
+          ideal: 1080,
+          max: 1440,
+        },
+        deviceId: this.selectedCamera,
+      },
+    };
+
     if (await navigator.mediaDevices.getUserMedia) {
-      await navigator.mediaDevices
-        .getUserMedia({ video: {} })
-        .then((stream) => {
-          this.enableCamera = true;
-          this.srcObject = stream;
-        });
+      await navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        this.enableCamera = true;
+        this.srcObject = stream;
+      });
     }
   }
+
+  changeCamera() {
+    if (this.enableCamera) {
+      this.getCamera();
+    }
+  }
+
+  getCameraSelection = () => {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const videoDevices = devices.filter(
+        (device) => device.kind === 'videoinput'
+      );
+      this.listCamera = videoDevices;
+      this.listCamera[0]?.deviceId
+        ? (this.selectedCamera = this.listCamera[0].deviceId)
+        : null;
+    });
+  };
 
   toggleCam() {
     if (this.enableCamera) {
@@ -434,94 +469,114 @@ export class FaceRecognitionComponent
     if (this.video) {
       const canvas = faceapi.createCanvas(this.video!);
       canvas.id = 'canvas';
-      document.querySelector('#video-container')?.append(canvas);
+      document.querySelector('#camera-zone')?.append(canvas);
 
-      const size = {
-        width: this.video!.offsetWidth,
-        height: this.video!.offsetHeight,
-      };
+      let camera = document.getElementById('camera-zone');
 
-      this.canvasInterval = setInterval(async () => {
-        const detecs = await faceapi
-          .detectAllFaces(this.video!, new faceapi.TinyFaceDetectorOptions())
-          .withFaceLandmarks()
-          .withFaceExpressions()
-          .withFaceDescriptors();
+      this.video!.addEventListener(
+        'loadedmetadata',
+        (e) => {
+          let positionInfo = camera!.getBoundingClientRect();
+          const size = {
+            width: positionInfo.width,
+            height: positionInfo.height,
+          };
 
-        const resize = faceapi.resizeResults(detecs, size);
+          this.canvasInterval = setInterval(async () => {
+            const detecs = await faceapi
+              .detectAllFaces(
+                this.video!,
+                new faceapi.TinyFaceDetectorOptions()
+              )
+              .withFaceLandmarks()
+              .withFaceExpressions()
+              .withFaceDescriptors();
 
-        canvas.height = this.video?.offsetHeight || 640;
-        canvas.width = this.video?.offsetWidth || 540;
+            const resize = faceapi.resizeResults(detecs, size);
 
-        canvas.getContext('2d')?.clearRect(0, 0, size.width, size.height);
-        // faceapi.draw.drawDetections(canvas, resize);
-        // faceapi.draw.drawFaceLandmarks(canvas, resize);
-        faceapi.draw.drawFaceExpressions(canvas, resize);
+            canvas.height = positionInfo.height;
+            canvas.width = positionInfo.width;
 
-        for (const detection of resize) {
-          const label = this.faceMatcher
-            .findBestMatch(detection.descriptor)
-            .toString();
+            canvas.getContext('2d')?.clearRect(0, 0, size.width, size.height);
+            // faceapi.draw.drawDetections(canvas, resize);
+            // faceapi.draw.drawFaceLandmarks(canvas, resize);
+            faceapi.draw.drawFaceExpressions(canvas, resize);
 
-          const isUnknown = label.substring(0, 7) === 'unknown';
-          const id = !isUnknown ? label.substring(0, 10) : undefined;
+            for (const detection of resize) {
+              const label = this.faceMatcher
+                .findBestMatch(detection.descriptor)
+                .toString();
 
-          const current = new Date();
-          const isDelay =
-            dayjs(
-              current.setMinutes(current.getMinutes() - Number(delayMax))
-            ).format('HH:mm:ss') > this.schedule.start_on_day;
+              const isUnknown = label.substring(0, 7) === 'unknown';
+              const id = !isUnknown ? label.substring(0, 10) : undefined;
 
-          const firstJoin = !this.hasJoinList.includes(id);
-          const previousValue = [...this.listStudent].filter(
-            (st) => st.id === id
-          )[0];
+              const current = new Date();
+              const isDelay =
+                dayjs(
+                  current.setMinutes(current.getMinutes() - Number(delayMax))
+                ).format('HH:mm:ss') > this.schedule.start_on_day;
 
-          // is first join
-          if (id && firstJoin) {
-            const person = {
-              id: id,
-              date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
-              originDate: current,
-              delay: isDelay,
-              isDelayDay: isDelay,
-              countJoin: 1,
-              totalTimeJoin: previousValue.minuteJoin + this.timeRepeatCheck,
-              progressCheck: this.getProgressCheck(),
-            };
+              const firstJoin = !this.hasJoinList.includes(id);
+              const previousValue = [...this.listStudent].filter(
+                (st) => st.id === id
+              )[0];
 
-            this.listUpdate.push(person);
-            this.hasJoinList.push(id);
-          }
+              // is first join
+              if (id && firstJoin) {
+                const person = {
+                  id: id,
+                  date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
+                  originDate: current,
+                  delay: isDelay,
+                  isDelayDay: isDelay,
+                  countJoin: 1,
+                  totalTimeJoin:
+                    previousValue.minuteJoin + this.timeRepeatCheck,
+                  progressCheck: this.getProgressCheck(),
+                };
 
-          // not first join
-          if (id && !firstJoin) {
-            const lastItem = [...this.listUpdate]
-              .reverse()
-              .find((el) => el.id === id);
+                this.listUpdate.push(person);
+                this.hasJoinList.push(id);
+              }
 
-            if (lastItem && lastItem.progressCheck < this.getProgressCheck()) {
-              const person = {
-                ...lastItem,
-                delay: undefined,
-                date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
-                originDate: current,
-                countJoin: lastItem.countJoin + 1,
-                totalTimeJoin: lastItem.totalTimeJoin + this.timeRepeatCheck,
-                progressCheck: this.getProgressCheck(),
-                notFirst: true,
-              };
+              // not first join
+              if (id && !firstJoin) {
+                const lastItem = [...this.listUpdate]
+                  .reverse()
+                  .find((el) => el.id === id);
 
-              this.listUpdate.push(person);
+                if (
+                  lastItem &&
+                  lastItem.progressCheck < this.getProgressCheck()
+                ) {
+                  const person = {
+                    ...lastItem,
+                    delay: undefined,
+                    date: dayjs(new Date()).format('HH:mm:ss DD/MM/YYYY'),
+                    originDate: current,
+                    countJoin: lastItem.countJoin + 1,
+                    totalTimeJoin:
+                      lastItem.totalTimeJoin + this.timeRepeatCheck,
+                    progressCheck: this.getProgressCheck(),
+                    notFirst: true,
+                  };
+
+                  this.listUpdate.push(person);
+                }
+              }
+
+              const drawBox = new faceapi.draw.DrawBox(
+                detection.detection.box,
+                {
+                  label: label,
+                }
+              );
+              drawBox.draw(canvas);
             }
-          }
-
-          const drawBox = new faceapi.draw.DrawBox(detection.detection.box, {
-            label: label,
-          });
-          drawBox.draw(canvas);
-        }
-      }, 500);
+          }, 500);
+        },
+        false
+      );
     }
   }
 

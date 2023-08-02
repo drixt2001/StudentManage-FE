@@ -37,6 +37,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 .control-panel {
@@ -74,12 +75,12 @@
 .setup-title {
   display: flex;
   width: 100%;
-  height: 100%;
   align-items: center;
   justify-content: center;
   background: #f0f2f5;
   animation-name: slidein;
   animation-duration: 0.9s;
+  margin-bottom: 1rem;
 
   .icon {
     margin-right: 10px;
@@ -105,4 +106,8 @@
   nz-input-number {
     width: 100% !important;
   }
+}
+
+.margin-bottom {
+  margin-bottom: 1rem;
 }

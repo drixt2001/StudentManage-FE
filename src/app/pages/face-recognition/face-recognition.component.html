@@ -210,15 +210,29 @@
             ></span>
             Thiết lập và bật chế độ điểm danh
           </h2>
-          <video
-            *ngIf="enableCamera"
-            id="video"
-            class="video"
-            #video
-            autoplay="true"
-            src=""
-            [srcObject]="srcObject"
-          ></video>
+          <nz-select
+            [(ngModel)]="selectedCamera"
+            nzPlaceHolder="Chọn Camera"
+            (ngModelChange)="changeCamera()"
+            [style.margin-bottom]="listCamera"
+          >
+            <nz-option
+              *ngFor="let cam of listCamera"
+              [nzLabel]="cam.label"
+              [nzValue]="cam.deviceId"
+            ></nz-option>
+          </nz-select>
+          <div id="camera-zone" style="display: flex">
+            <video
+              *ngIf="enableCamera"
+              id="video"
+              class="video"
+              #video
+              autoplay="true"
+              src=""
+              [srcObject]="srcObject"
+            ></video>
+          </div>
         </div>
 
         <nz-tabset style="height: 100%; width: 30%; padding: 0 20px">
