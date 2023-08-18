@@ -195,52 +195,85 @@
   </div>
 
   <div *ngIf="selectedTab === 'pictures'" class="pictures bar">
-    <div class="clearfix">
-      <nz-upload
-        [nzFileType]="'image/png,image/jpeg'"
-        [nzMultiple]="true"
-        [nzAction]="uploadPicLink"
-        nzListType="picture-card"
-        [(nzFileList)]="fileList"
-        [nzShowButton]="fileList.length < 8"
-        [nzPreview]="handlePreview"
-        [nzRemove]="handleRemove"
-        (nzChange)="handleReq($event)"
-      >
-        <div>
-          <span nz-icon nzType="plus"></span>
-          <div style="margin-top: 8px">Upload</div>
-        </div>
-      </nz-upload>
+    <div class="left" style="width: 50%">
+      <div class="clearfix">
+        <nz-upload
+          [nzFileType]="'image/png,image/jpeg'"
+          [nzMultiple]="true"
+          [nzAction]="uploadPicLink"
+          nzListType="picture-card"
+          [(nzFileList)]="fileList"
+          [nzShowButton]="fileList.length < 20"
+          [nzPreview]="handlePreview"
+          [nzRemove]="handleRemove"
+          (nzChange)="handleReq($event)"
+        >
+          <div>
+            <span nz-icon nzType="plus"></span>
+            <div style="margin-top: 8px">Upload</div>
+          </div>
+        </nz-upload>
 
-      <nz-modal
-        [nzVisible]="previewVisible"
-        [nzContent]="modalContent"
-        [nzFooter]="null"
-        (nzOnCancel)="previewVisible = false"
-      >
-        <ng-template #modalContent>
-          <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
-        </ng-template>
-      </nz-modal>
+        <nz-modal
+          [nzVisible]="previewVisible"
+          [nzContent]="modalContent"
+          [nzFooter]="null"
+          (nzOnCancel)="previewVisible = false"
+        >
+          <ng-template #modalContent>
+            <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+          </ng-template>
+        </nz-modal>
+      </div>
+      <div class="action-bar">
+        <button (click)="startCam()" nz-button nzType="primary">
+          Chụp Ảnh Trực Tiếp
+        </button>
+        <button
+          *ngIf="fileList.length"
+          [nzLoading]="isLoadingTrainModel"
+          (click)="updateDataModel()"
+          nz-button
+          nzType="primary"
+        >
+          Đồng Bộ Mô Hình
+        </button>
+      </div>
     </div>
-    <div class="action-bar">
-      <button
-        [nzLoading]="isLoadingTrainModel"
-        (click)="updateDataModel()"
-        nz-button
-        nzType="primary"
-      >
-        Tạo Mô Hình
-      </button>
-      <button
-        *ngIf="dataModel"
-        (click)="uploadDataModel()"
-        nz-button
-        nzType="primary"
-      >
-        Tải Lên Mô Hình
-      </button>
+
+    <div [hidden]="!startCamera" class="right" style="width: 50%">
+      <h2>Thêm ảnh cá nhân bằng Camera trực tiếp</h2>
+
+      <div class="flex">
+        <div class="child" style="display: flex">
+          <video id="video" width="320" height="240" autoplay></video>
+          <button
+            id="click-photo"
+            nz-button
+            nzType="primary"
+            (click)="capImage()"
+          >
+            Chụp Ảnh
+          </button>
+        </div>
+
+        <div class="child" style="margin-left: 1rem">
+          <canvas
+            id="canvas"
+            width="320"
+            height="240"
+            style="margin-left: 1rem"
+          ></canvas>
+          <button
+            id="click-photo"
+            nz-button
+            nzType="primary"
+            (click)="uploadImage()"
+          >
+            Tải Lên Ảnh
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
