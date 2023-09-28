@@ -30,6 +30,11 @@ export class PersonalDataViewComponent implements OnInit {
   departmentData: any[] = [];
   classData: any[] = [];
 
+  // capture
+  video!: HTMLVideoElement;
+  canvas!: HTMLCanvasElement;
+  startCamera = false;
+
   personalForm = new FormGroup({
     id: new FormControl('', [Validators.required, Validators.minLength(10)]),
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -77,6 +82,39 @@ export class PersonalDataViewComponent implements OnInit {
     }
   }
 
+  async startCam() {
+    this.startCamera = true;
+    this.video = document.querySelector('#video') as HTMLVideoElement;
+
+    let stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    });
+    this.video.srcObject = stream;
+  }
+
+  capImage() {
+    this.canvas = document.querySelector('#canvas') as HTMLCanvasElement;
+    this.canvas
+      .getContext('2d')
+      ?.drawImage(this.video, 0, 0, this.canvas!.width, this.canvas!.height);
+  }
+
+  async uploadImage() {
+    let image_data_url = this.canvas!.toDataURL('image/jpeg');
+    const response = await fetch(image_data_url);
+    const blob = await response.blob();
+
+    let formData = new FormData();
+    formData.append('file', blob);
+
+    this.service.uploadPicture(this.uploadPicLink!, formData).subscribe(() => {
+      this.toast.open('Tải lên thành công', 'success');
+      this.getListPicture();
+    });
+  }
+
+  ////
   getListDepartment() {
     this.departmentService.getList().subscribe((dep) => {
       this.departmentData = dep.data;
@@ -154,6 +192,7 @@ export class PersonalDataViewComponent implements OnInit {
   };
   async updateDataModel() {
     this.dataModel = await this.trainingModel(this.personId);
+    this.uploadDataModel();
   }
 
   getListPicture() {

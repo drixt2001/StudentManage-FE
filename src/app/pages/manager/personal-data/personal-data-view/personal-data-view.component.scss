@@ -1,5 +1,9 @@
 .container .bar {
   margin: 20px;
+
+  &.pictures {
+    display: flex;
+  }
 }
 
 .profile.content {
@@ -51,5 +55,18 @@
   margin-top: 24px;
   button {
     margin-right: 12px;
+  }
+}
+
+canvas {
+  margin: 0 !important;
+}
+
+.flex {
+  display: flex;
+
+  .child {
+    display: flex;
+    flex-direction: column;
   }
 }

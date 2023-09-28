@@ -30,4 +30,8 @@ export class PersonalDataViewService {
       data: data,
     });
   }
+
+  uploadPicture(urlHost: string, formData: any) {
+    return this.httpClient.post<any>(urlHost, formData);
+  }
 }
