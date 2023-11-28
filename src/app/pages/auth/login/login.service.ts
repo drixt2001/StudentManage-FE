@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastService } from '../../../components/toast/toast.service';
 import { Router } from '@angular/router';
-import { map } from 'rxjs';
+import { map, of } from 'rxjs';
 import { host } from '../../../config/host';
 import { check } from 'src/app/modules/face-api/face-api';
 
@@ -22,6 +22,7 @@ export class LoginService {
       map((res) => {
         localStorage.setItem('token', res.access_token);
         this.router.navigate([res.router_link]);
+        return of(true);
       })
     );
   }

@@ -17,16 +17,25 @@ import {
 import { catchError, filter, map, mergeMap, Observable, of } from 'rxjs';
 import { LoginService } from 'src/app/pages/auth/login/login.service';
 import { check } from '../modules/face-api/face-api';
+import { AppComponent } from '../app.component';
+import { AppService } from '../app.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoleGuard implements CanActivate {
-  constructor(private router: Router, private service: LoginService) {}
+  constructor(
+    private router: Router,
+    private service: LoginService,
+    private appService: AppService
+  ) {}
   canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (localStorage.getItem('token')) {
       if (check.guard_id) {
         if (check.guard_id === '/' + state.url.split('/')[1]) {
+          if (check.guard_id === '/quanly') {
+            this.appService.getFaceAPIModel();
+          }
           return true;
         } else {
           this.router.navigate(['/login']);

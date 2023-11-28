@@ -1,4 +1,4 @@
-<div class="loading-bar" *ngIf="!canActive">
+<div class="loading-bar" *ngIf="!checkHome() && !canActive">
   <nz-progress
     [nzPercent]="percent"
     nzType="circle"

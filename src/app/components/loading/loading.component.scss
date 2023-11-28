@@ -4,3 +4,11 @@ nz-spin {
   top: 50%;
   left: 50%;
 }
+
+:host ::ng-deep {
+  nz-spin.styled {
+    .ant-spin-dot-item {
+      background-color: #353535;
+    }
+  }
+}

@@ -24,7 +24,7 @@
     "face-api.js": "^0.22.2",
     "fs": "^0.0.1-security",
     "ng-zorro-antd": "^15.1.0",
-    "ngx-socket-io": "^4.5.1",
+    "ngx-socket-io": "^4.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"

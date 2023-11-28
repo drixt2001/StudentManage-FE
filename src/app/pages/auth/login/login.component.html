@@ -1,50 +1,65 @@
 <div *ngIf="displayLogin" class="login-container">
   <div class="layout">
-    <div class="image-container">
-      <img src="../../../../assets/img/login.png" alt="" />
+    <div #leftDiv class="left">
+      <h3 class="title" style="color: white">Đăng Nhập</h3>
+      <h3 class="subtitle" style="color: white">Điền thông tin đăng nhập</h3>
+
+      <form nz-form class="login-form" (ngSubmit)="Login()">
+        <nz-form-item class="input email">
+          <nz-form-control nzErrorTip="Vui lòng nhập đúng định dạng Email!">
+            <nz-input-group nzPrefixIcon="user">
+              <input
+                [formControl]="emailFormControl"
+                nz-input
+                placeholder="Email"
+                type="email"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="input password">
+          <nz-form-control nzErrorTip="Mật khẩu cần có tối thiểu 6 ký tự!">
+            <nz-input-group nzPrefixIcon="lock">
+              <input
+                nzSize="large"
+                [formControl]="passwordFormControl"
+                nz-input
+                type="password"
+                placeholder="Mật khẩu"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+
+        <h4 class="forgot" style="color: white">Quên mật khẩu?</h4>
+
+        <button
+          type="submit"
+          id="login-btn"
+          class="button add"
+          nzShape="round"
+          nzSize="large"
+          nz-button
+          nzType="primary"
+          [disabled]="!emailFormControl.valid || !passwordFormControl.valid"
+          [class.disabled]="
+            !emailFormControl.valid || !passwordFormControl.valid
+          "
+        >
+          Đăng Nhập
+        </button>
+      </form>
     </div>
-    <div class="form-container">
-      <div class="form">
-        <form nz-form class="login-form" (ngSubmit)="Login()">
-          <h3 style="color: cadetBlue">Thông Tin Đăng Nhập</h3>
-          <nz-form-item class="input email">
-            <nz-form-control nzErrorTip="Vui lòng nhập đúng định dạng Email!">
-              <nz-input-group nzPrefixIcon="user">
-                <input
-                  [formControl]="emailFormControl"
-                  nz-input
-                  placeholder="Email"
-                />
-              </nz-input-group>
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item class="input password">
-            <nz-form-control nzErrorTip="Mật khẩu cần có tối thiểu 6 ký tự!">
-              <nz-input-group nzPrefixIcon="lock">
-                <input
-                  nzSize="large"
-                  [formControl]="passwordFormControl"
-                  nz-input
-                  type="password"
-                  placeholder="Password"
-                />
-              </nz-input-group>
-            </nz-form-control>
-          </nz-form-item>
-          <button
-            type="submit"
-            id="login-btn"
-            class="button add"
-            nzShape="round"
-            nzSize="large"
-            nz-button
-            nzType="primary"
-            [disabled]="!emailFormControl.valid || !passwordFormControl.valid"
-          >
-            Đăng Nhập
-          </button>
-        </form>
-      </div>
+
+    <div class="right">
+      <h3 class="big title" style="color: white">Chào mừng bạn</h3>
+      <h3 class="sub title" style="color: white">
+        <span>Đến với hệ thống</span>
+        <br />
+        <span class="shadow"> Quản lý người dạy - học </span>
+        <br />
+        <span> sử dụng công nghệ nhận diện khuôn mặt </span>
+      </h3>
     </div>
   </div>
 </div>
