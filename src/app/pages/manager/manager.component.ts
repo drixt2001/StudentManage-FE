@@ -41,11 +41,4 @@ export class ManagerComponent implements OnInit {
   logout() {
     this.loginService.logout();
   }
-
-  openFaceRecognition() {
-    let newRelativeUrl = this.router.createUrlTree(['/face-recognition']);
-    let baseUrl = window.location.href.replace(this.router.url, '');
-
-    window.open(baseUrl + newRelativeUrl, '_blank');
-  }
 }
