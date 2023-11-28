@@ -178,7 +178,6 @@ export class ViewComponent {
 
   getListStudent() {
     this.personalDataService.getList('student').subscribe((res) => {
-      console.log(res);
       this.studentList = res.data.map((val: any) => {
         return {
           ...val,
@@ -207,7 +206,6 @@ export class ViewComponent {
       }
       return e;
     });
-    console.log(ret);
     if (ret.from === 'left') {
       ret.list.map((item: any) => {
         this.service

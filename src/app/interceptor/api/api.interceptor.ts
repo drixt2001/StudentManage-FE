@@ -34,15 +34,13 @@ export class ApiInterceptor implements HttpInterceptor {
     });
     return next.handle(clone).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.log(error);
-        if (error.error.message) {
+        if (error.error.statusCode === 401) {
+          this.authService.logout();
+        } else if (error.error.message) {
           this.toast.open(error.error.message, 'error');
         } else {
           this.toast.open('Lỗi máy chủ', 'error');
         }
-        // if (this.router.url !== '/login' && this.router.url !== '/noti') {
-        //   this.authService.logout();
-        // }
         return throwError(error.error);
       })
     );

@@ -25,6 +25,7 @@ import { ViewModule } from './pages/manager/module/view/view.module';
 import { host } from './config/host';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { DashboardModule } from './pages/manager/dashboard/dashboard.module';
+import { ReportModule } from './pages/manager/report/report.module';
 
 registerLocaleData(vi);
 
@@ -54,6 +55,7 @@ const config: SocketIoConfig = { url: host, options: {} };
     ModuleModule,
     ViewModule,
     DashboardModule,
+    ReportModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },

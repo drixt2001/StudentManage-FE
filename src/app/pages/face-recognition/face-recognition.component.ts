@@ -198,8 +198,6 @@ export class FaceRecognitionComponent
         moduleId: this.faceForm.value.selectedModule,
         data: [...this.sendData],
       }));
-
-    console.log('upadte call', this.sendData);
   }
 
   fetchRollCallData() {
@@ -223,7 +221,6 @@ export class FaceRecognitionComponent
             });
 
             this.listStudent = newList;
-            console.log('new list update', this.listStudent);
           }
         })
     );

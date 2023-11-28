@@ -13,6 +13,7 @@ export class DashboardComponent implements OnDestroy, AfterViewInit {
   onlineClass = 0;
   totalClass = 0;
   myChart: any;
+  countChart: any;
   listLabels: any[] = ['Start'];
   listCountClass: any[] = [0];
 
@@ -58,8 +59,50 @@ export class DashboardComponent implements OnDestroy, AfterViewInit {
           x: {
             beginAtZero: true,
           },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+            },
+          },
+        },
+      },
+    });
+
+    this.countChart = new Chart('countDelayChart', {
+      type: 'bar',
+      data: {
+        labels: ['K53 THKT', 'K57 KTS', 'K53 TKKD', 'K55 PTDL'],
+        datasets: [
+          {
+            label: 'Đi Muộn',
+            data: [5, 3, 2, 1],
+            backgroundColor: ['cadetBlue'],
+            borderColor: 'cadetBlue',
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'x',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+            },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+            },
+          },
         },
       },
     });
   }
+
+  //
+
+  //
 }

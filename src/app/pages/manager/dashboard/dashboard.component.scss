@@ -1,8 +1,19 @@
 #onlineClassChart {
-  height: 50vh !important;
-  align-items: center;
+  // height: 50vh !important;
+  // align-items: center;
 }
 
 .chartOnline {
   display: flex;
+}
+
+.container {
+  width: 45%;
+}
+
+.big {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
 }

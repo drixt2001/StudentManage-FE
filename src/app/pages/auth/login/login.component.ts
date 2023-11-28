@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { LoginService } from './login.service';
 import { Router } from '@angular/router';
+import { check } from 'src/app/modules/face-api/face-api';
 
 @Component({
   selector: 'app-login',
@@ -11,13 +12,16 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   hide = true;
   token: string = '';
+  displayLogin = false;
 
   constructor(private loginService: LoginService, private router: Router) {}
 
   ngOnInit(): void {
     this.token = localStorage.getItem('token') || '';
     if (this.token) {
-      this.router.navigate(['/quanly']);
+      this.loginService.authInfo().pipe().subscribe();
+    } else {
+      this.displayLogin = true;
     }
   }
 

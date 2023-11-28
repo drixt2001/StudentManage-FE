@@ -4,6 +4,7 @@ import { ToastService } from '../../../components/toast/toast.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
 import { host } from '../../../config/host';
+import { check } from 'src/app/modules/face-api/face-api';
 
 @Injectable({
   providedIn: 'root',
@@ -20,24 +21,33 @@ export class LoginService {
     return this.http.post<any>(Url, { email, password }).pipe(
       map((res) => {
         localStorage.setItem('token', res.access_token);
-        this.router.navigate(['/quanly']);
+        this.router.navigate([res.router_link]);
       })
     );
   }
 
-  logout() {
-    localStorage.removeItem('token');
-    this.router.navigate(['login']);
+  async logout() {
+    check.guard_id = await '';
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 
-  auth() {
+  authInfo() {
     const token = localStorage.getItem('token');
     let headers = new HttpHeaders();
     headers = headers.set('Authorization', `Bearer ${token}`);
     return this.http
-      .get<any>(`http://${host}/account/info`, {
+      .get<any>(`${host}/auth/info`, {
         headers: headers,
       })
-      .pipe();
+      .pipe(
+        map((val) => {
+          if (val.link) {
+            check.guard_id = val.link;
+            this.router.navigate([val.link]);
+            return val;
+          }
+        })
+      );
   }
 }

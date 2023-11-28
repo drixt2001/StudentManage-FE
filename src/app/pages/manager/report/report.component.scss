@@ -1,0 +1,31 @@
+nz-select {
+  width: 350px;
+}
+
+.name {
+  width: 250px;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+
+  .button.add {
+    margin-left: auto;
+  }
+}
+
+.filter-child {
+  margin-right: 10px;
+}
+
+.chart {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  div {
+    width: 45%;
+  }
+}

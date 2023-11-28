@@ -10,6 +10,8 @@ import { PeriodComponent } from './pages/manager/period/period.component';
 import { ModuleComponent } from './pages/manager/module/module.component';
 import { ViewComponent } from './pages/manager/module/view/view.component';
 import { DashboardComponent } from './pages/manager/dashboard/dashboard.component';
+import { ReportComponent } from './pages/manager/report/report.component';
+import { ChildRoleGuard, RoleGuard } from './guard/role.guard';
 
 const routes: Routes = [
   { path: 'face-recognition', component: FaceRecognitionComponent },
@@ -45,11 +47,22 @@ const routes: Routes = [
         path: 'hocphan/:id',
         component: ViewComponent,
       },
+      {
+        path: 'thongkebaocao',
+        component: ReportComponent,
+      },
     ],
+    canActivate: [RoleGuard],
+    canActivateChild: [ChildRoleGuard],
   },
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'sinhvien',
+    component: ManagerComponent,
+    canActivate: [RoleGuard],
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login', pathMatch: 'full' },

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FaceRecognitionService } from '../face-recognition/face-recognition.service';
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { LoginService } from '../auth/login/login.service';
 
 @Component({
   selector: 'app-manager',
@@ -11,10 +12,9 @@ import { filter } from 'rxjs';
 export class ManagerComponent implements OnInit {
   listBreadcrumms: any[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private loginService: LoginService) {}
 
   ngOnInit(): void {
-    console.log('manage init');
     this.listBreadcrumms.push({ link: '/quanly', name: 'Trang Chủ' });
     this.router.events
       .pipe(filter((ev) => ev instanceof NavigationStart))
@@ -39,8 +39,7 @@ export class ManagerComponent implements OnInit {
   }
 
   logout() {
-    localStorage.clear();
-    this.router.navigate(['/login']);
+    this.loginService.logout();
   }
 
   openFaceRecognition() {

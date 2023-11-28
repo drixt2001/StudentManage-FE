@@ -9,18 +9,19 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, DoCheck {
-  title = 'quanlysinhvien';
-  canActive = false;
+  title = 'Quản Lý Điểm Danh';
+  canActive = true;
   percent = 0;
   token: string = '';
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.getFaceAPIModel();
+    // this.getFaceAPIModel();
     this.token = localStorage.getItem('token') || '';
     if (!this.token) {
       this.router.navigate(['/login']);
+    } else {
     }
   }
 

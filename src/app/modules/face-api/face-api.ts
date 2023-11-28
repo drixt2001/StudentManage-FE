@@ -4,4 +4,5 @@ export const face = faceapi;
 
 export const check = {
   loadFaceApi: false,
+  guard_id: '',
 };
