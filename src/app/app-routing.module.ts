@@ -14,7 +14,11 @@ import { ReportComponent } from './pages/manager/report/report.component';
 import { ChildRoleGuard, RoleGuard } from './guard/role.guard';
 
 const routes: Routes = [
-  { path: 'face-recognition', component: FaceRecognitionComponent },
+  {
+    path: 'diemdanh',
+    component: FaceRecognitionComponent,
+    canActivate: [RoleGuard],
+  },
   {
     path: 'quanly',
     component: ManagerComponent,

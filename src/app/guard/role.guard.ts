@@ -32,8 +32,11 @@ export class RoleGuard implements CanActivate {
   canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (localStorage.getItem('token')) {
       if (check.guard_id) {
-        if (check.guard_id === '/' + state.url.split('/')[1]) {
-          if (check.guard_id === '/quanly') {
+        if (
+          check.guard_id === '/' + state.url.split('/')[1] ||
+          state.url === '/diemdanh'
+        ) {
+          if (check.guard_id === '/quanly' && this.appService.percent !== 100) {
             this.appService.getFaceAPIModel();
           }
           return true;
