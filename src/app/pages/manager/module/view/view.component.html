@@ -310,6 +310,61 @@
   </div>
 
   <div *ngIf="selectedTab === 'results'" class="settings bar">
-    Kết quả điểm danh của các sinh viên
+    <ng-container *ngFor="let result of listResult">
+      <h4 style="width: 100%" nz-typography>Buổi {{ result.date }}</h4>
+      <nz-table
+        style="margin-bottom: 1rem"
+        nzBordered
+        [nzShowPagination]="false"
+        #t
+        [nzData]="result.listStudent"
+        nzSize="small"
+      >
+        <thead>
+          <tr>
+            <th>MSV</th>
+            <th>Tên</th>
+            <th>Ngày Sinh</th>
+            <th>Tham Gia (%)</th>
+            <th>Đi Muộn</th>
+            <th>Vắng</th>
+            <th>Đăng Ký Phép</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of t.data">
+            <td>{{ data.id }}</td>
+            <td>{{ data.name }}</td>
+            <td>
+              <nz-tag>{{ data.birthday | date : "dd/MM/yyyy" }}</nz-tag>
+            </td>
+            <td>{{ data.percentJoin }}</td>
+            <td>
+              <span
+                *ngIf="data.isDelay"
+                nz-icon
+                nzType="check"
+                nzTheme="outline"
+              ></span>
+            </td>
+            <td>
+              <span
+                *ngIf="data.isLeave"
+                nz-icon
+                nzType="check"
+                nzTheme="outline"
+              ></span>
+            </td>
+            <td>
+              <span
+                *ngIf="false"
+                nz-icon
+                nzType="check"
+                nzTheme="outline"
+              ></span>
+            </td>
+          </tr>
+        </tbody> </nz-table
+    ></ng-container>
   </div>
 </div>

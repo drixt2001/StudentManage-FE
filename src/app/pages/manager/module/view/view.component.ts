@@ -9,6 +9,7 @@ import { PersonalDataService } from '../../personal-data/personal-data.service';
 import { ModuleService } from '../module.service';
 import { PeriodService } from '../../period/period.service';
 import { TransferItem } from 'ng-zorro-antd/transfer';
+import * as dayjs from 'dayjs';
 
 @Component({
   selector: 'app-view',
@@ -25,11 +26,13 @@ export class ViewComponent {
   teacherData: any[] = [];
   studentList: any[] = [];
   listIdStudent: any[] = [];
+  listJoinStudent: any[] = [];
   weektimes: any[] = [];
   initWeektimes: any[] = [];
   currentTime: any[] = [];
-  listRepeatCheckTime = [0.5, 1, 5, 10, 25, 30];
+  listRepeatCheckTime = [1, 5, 10, 25, 30];
 
+  listResult: any[] = [];
   moduleForm = new FormGroup({
     sid: new FormControl('', [Validators.required]),
     name: new FormControl('', [Validators.required]),
@@ -70,6 +73,38 @@ export class ViewComponent {
     });
     if (this.moduleId) {
       this.getModuleDetail(this.moduleId);
+
+      this.service.getListResultStudent(this.moduleId).subscribe((rs) => {
+        let result = rs.data;
+
+        console.log(this.listJoinStudent);
+        this.service.getListResult(this.moduleId || '').subscribe((val) => {
+          this.listResult = val.data.map((data: any) => {
+            return {
+              ...data,
+              date: dayjs(data.date).format('DD/MM/YYYY'),
+              listStudent: result
+                .filter((r: any) => r.roll_call_id === data.id)
+                .map((f: any) => {
+                  const stuId = f.student_id;
+
+                  const info = this.listJoinStudent.find(
+                    (val) => val.student_id === stuId
+                  );
+
+                  return {
+                    id: info.id,
+                    name: info.name,
+                    birthday: info.birthday,
+                    percentJoin: f.total_percent,
+                    isDelay: f.delay,
+                    isLeave: f.leave,
+                  };
+                }),
+            };
+          });
+        });
+      });
     }
   }
 
@@ -150,6 +185,7 @@ export class ViewComponent {
 
         this.listIdStudent =
           module.data.students?.map((val: any) => val.student_id) || [];
+        this.listJoinStudent = module.data.students;
         this.getListStudent();
         this.getSchedule();
       });

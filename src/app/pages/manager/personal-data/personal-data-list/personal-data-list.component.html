@@ -125,7 +125,15 @@
           <td>
             <a [routerLink]="['sua', data.id]">Xem</a>
             <nz-divider nzType="vertical"></nz-divider>
-            <a>Xóa</a>
+            <a
+              (nzOnConfirm)="delete(data.id)"
+              nzType="default"
+              nzDanger
+              nz-popconfirm
+              nzPopconfirmTitle="Xác nhận xóa người dùng này? Không thể phục hồi dữ liệu!"
+              nzPopconfirmPlacement="topRight"
+              >Xóa</a
+            >
           </td>
         </tr>
       </tbody>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { PersonalDataService } from '../personal-data.service';
 import * as dayjs from 'dayjs';
 import { DepartmentService } from '../../department/department.service';
+import { map } from 'rxjs';
+import { ToastService } from 'src/app/components/toast/toast.service';
 
 @Component({
   selector: 'app-personal-data-list',
@@ -11,7 +13,9 @@ import { DepartmentService } from '../../department/department.service';
 export class PersonalDataListComponent implements OnInit {
   constructor(
     private personalDataService: PersonalDataService,
-    private departmentService: DepartmentService
+    private departmentService: DepartmentService,
+
+    public toast: ToastService
   ) {}
 
   selectedRole!: string;
@@ -72,5 +76,17 @@ export class PersonalDataListComponent implements OnInit {
       this.departmentService.getListClass(id).subscribe((cls) => {
         this.classData = cls.data;
       });
+  }
+
+  delete(id: string) {
+    this.personalDataService
+      .delete(id)
+      .pipe(
+        map((res) => {
+          this.setData();
+          return this.toast.open('Xóa thành công!', 'success');
+        })
+      )
+      .subscribe();
   }
 }

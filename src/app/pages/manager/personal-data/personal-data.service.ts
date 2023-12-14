@@ -32,4 +32,8 @@ export class PersonalDataService {
     const Url = `${host}/personal/detail/${id}?type=${type}`;
     return this.http.get<any>(Url).pipe();
   }
+
+  delete(id: string) {
+    return this.http.delete<any>(`${host}/personal/` + id);
+  }
 }

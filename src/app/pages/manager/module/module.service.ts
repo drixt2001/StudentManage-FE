@@ -47,4 +47,12 @@ export class ModuleService {
       data: data,
     });
   }
+
+  getListResult(module_id: string) {
+    return this.http.get<any>(`${host}/module/list/${module_id}`);
+  }
+
+  getListResultStudent(module_id: string) {
+    return this.http.get<any>(`${host}/module/list-student/${module_id}`);
+  }
 }
