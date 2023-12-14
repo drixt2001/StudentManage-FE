@@ -18,6 +18,11 @@
     <span nz-icon nzType="form" nzTheme="outline"></span>
     Kết Quả Điểm Danh
   </li>
+
+  <li nz-menu-item (click)="changeTab('leave')">
+    <span nz-icon nzType="form" nzTheme="outline"></span>
+    Quản Lý Vắng Phép
+  </li>
 </ul>
 
 <div class="container">
@@ -357,7 +362,7 @@
             </td>
             <td>
               <span
-                *ngIf="false"
+                *ngIf="data.leaveApproved"
                 nz-icon
                 nzType="check"
                 nzTheme="outline"
@@ -366,5 +371,62 @@
           </tr>
         </tbody> </nz-table
     ></ng-container>
+  </div>
+
+  <div *ngIf="selectedTab === 'leave'" class="settings bar">
+    <ng-container *ngFor="let result of listResult">
+      <h4 style="width: 100%" nz-typography>Buổi {{ result.date }}</h4>
+      <nz-table
+        style="margin-bottom: 1rem"
+        nzBordered
+        [nzShowPagination]="false"
+        #t
+        [nzData]="result.listLeave"
+        nzSize="small"
+      >
+        <thead>
+          <tr>
+            <th>MSV</th>
+            <th>Tên</th>
+            <th>Ngày Sinh</th>
+            <th>Trạng Thái</th>
+            <th>Hành Động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of t.data">
+            <td>{{ data.id }}</td>
+            <td>{{ data.name }}</td>
+            <td>
+              <nz-tag>{{ data.birthday | date : "dd/MM/yyyy" }}</nz-tag>
+            </td>
+            <td>
+              <nz-tag>{{ data.approve ? "Đã duyệt" : "Chưa duyệt" }}</nz-tag>
+            </td>
+            <td>
+              <a
+                (nzOnConfirm)="update(data.raw_id, true)"
+                nzType="default"
+                nzDanger
+                nz-popconfirm
+                nzPopconfirmTitle="Xác nhận phê duyệt!"
+                nzPopconfirmPlacement="topRight"
+                >Phê Duyệt</a
+              >
+              <nz-divider nzType="vertical"></nz-divider>
+              <a
+                (nzOnConfirm)="update(data.raw_id, false)"
+                nzType="default"
+                nzDanger
+                nz-popconfirm
+                nzPopconfirmTitle="Xác nhận từ chối!"
+                nzPopconfirmPlacement="topRight"
+                >Từ Chối</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </nz-table></ng-container
+    >
   </div>
 </div>

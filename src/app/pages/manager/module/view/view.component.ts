@@ -73,11 +73,17 @@ export class ViewComponent {
     });
     if (this.moduleId) {
       this.getModuleDetail(this.moduleId);
+      this.getResult(this.moduleId);
+    }
+  }
 
-      this.service.getListResultStudent(this.moduleId).subscribe((rs) => {
-        let result = rs.data;
+  getResult(moduleId: any) {
+    this.service.getListResultStudent(moduleId).subscribe((rs) => {
+      let result = rs.data;
 
-        console.log(this.listJoinStudent);
+      this.service.getLeave(this.moduleId || '').subscribe((leave) => {
+        let leaveRs = leave.data;
+
         this.service.getListResult(this.moduleId || '').subscribe((val) => {
           this.listResult = val.data.map((data: any) => {
             return {
@@ -92,6 +98,13 @@ export class ViewComponent {
                     (val) => val.student_id === stuId
                   );
 
+                  const leaveApproved = [...leaveRs].filter((val: any) => {
+                    return (
+                      val.student_id == stuId &&
+                      val.approve == true &&
+                      data.date.toString() == val.date.toString()
+                    );
+                  });
                   return {
                     id: info.id,
                     name: info.name,
@@ -99,13 +112,41 @@ export class ViewComponent {
                     percentJoin: f.total_percent,
                     isDelay: f.delay,
                     isLeave: f.leave,
+                    leaveApproved: leaveApproved.length ? true : false,
+                  };
+                }),
+              listLeave: [...leaveRs]
+                .filter(
+                  (val: any) => data.date.toString() == val.date.toString()
+                )
+                .map((f: any) => {
+                  const stuId = f.student_id;
+
+                  const info = this.listJoinStudent.find(
+                    (val) => val.student_id === stuId
+                  );
+
+                  return {
+                    id: info.id,
+                    name: info.name,
+                    birthday: info.birthday,
+                    approve: f.approve,
+                    raw_id: f.id,
                   };
                 }),
             };
           });
         });
       });
-    }
+    });
+  }
+
+  update(id: any, flag: boolean) {
+    this.service.updateLeave(id, flag).subscribe(() => {
+      const ms = flag ? 'Phê duyệt thành công' : 'Đã từ chối';
+      this.toast.open(ms, 'success');
+      this.getResult(this.moduleId);
+    });
   }
 
   changeTime() {

@@ -55,4 +55,12 @@ export class ModuleService {
   getListResultStudent(module_id: string) {
     return this.http.get<any>(`${host}/module/list-student/${module_id}`);
   }
+
+  getLeave(module_id: string) {
+    return this.http.get<any>(`${host}/module/leave/${module_id}`);
+  }
+
+  updateLeave(id: any, flag: boolean) {
+    return this.http.put<any>(`${host}/module/leave/${id}/${flag}`, {});
+  }
 }
