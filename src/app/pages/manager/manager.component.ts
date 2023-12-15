@@ -3,6 +3,7 @@ import { FaceRecognitionService } from '../face-recognition/face-recognition.ser
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { LoginService } from '../auth/login/login.service';
+import { check } from 'src/app/modules/face-api/face-api';
 
 @Component({
   selector: 'app-manager',
@@ -11,7 +12,9 @@ import { LoginService } from '../auth/login/login.service';
 })
 export class ManagerComponent implements OnInit {
   listBreadcrumms: any[] = [];
+  roleName = '';
 
+  guard = -1;
   constructor(private router: Router, private loginService: LoginService) {}
 
   ngOnInit(): void {
@@ -36,6 +39,11 @@ export class ManagerComponent implements OnInit {
           this.listBreadcrumms.pop();
         }
       });
+
+    const info = JSON.parse(localStorage.getItem('info') || '{}');
+
+    this.roleName = `${info.role} : ${info.name}`;
+    this.guard = Number(info.role_code);
   }
 
   logout() {

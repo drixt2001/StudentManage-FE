@@ -56,12 +56,7 @@
       Thống Kê
     </button>
 
-    <button
-      class="button add"
-      (click)="toggleModal()"
-      nz-button
-      nzType="primary"
-    >
+    <button class="button add" (click)="export()" nz-button nzType="primary">
       <span nz-icon nzType="file-excel" nzTheme="outline"></span>
       Xuất Excel
     </button>
@@ -69,7 +64,7 @@
     <!-- Button -->
   </div>
   <div class="table container">
-    <nz-table nzBordered #Table [nzData]="listOfData">
+    <nz-table id="tablez" nzBordered #Table [nzData]="listOfData">
       <thead>
         <tr>
           <th>STT</th>
@@ -156,10 +151,6 @@
         <nz-option [nzLabel]="'Tuần này'" [nzValue]="'week'"></nz-option>
         <nz-option [nzLabel]="'Tháng này'" [nzValue]="'month'"></nz-option>
         <nz-option [nzLabel]="'Học kỳ nay'" [nzValue]="'semester'"></nz-option>
-        <nz-option
-          [nzLabel]="'Tùy chọn khoảng'"
-          [nzValue]="'semester'"
-        ></nz-option>
       </nz-select>
     </div>
     <!-- Hoc ky -->
@@ -170,12 +161,7 @@
       Báo cáo
     </button>
 
-    <button
-      class="button add"
-      (click)="toggleModal()"
-      nz-button
-      nzType="primary"
-    >
+    <button class="button add" (click)="export()" nz-button nzType="primary">
       <span nz-icon nzType="file-pdf" nzTheme="outline"></span>
       Xuất PDF
     </button>

@@ -44,6 +44,7 @@ export class LoginService {
       .pipe(
         map((val) => {
           if (val.link) {
+            localStorage.setItem('info', JSON.stringify(val));
             check.guard_id = val.link;
             this.router.navigate([val.link]);
             return val;

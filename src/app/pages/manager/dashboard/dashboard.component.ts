@@ -76,7 +76,7 @@ export class DashboardComponent implements OnDestroy, AfterViewInit {
         datasets: [
           {
             label: 'Đi Muộn',
-            data: [5, 3, 2, 1],
+            data: [1, 0, 0, 0],
             backgroundColor: ['cadetBlue'],
             borderColor: 'cadetBlue',
           },

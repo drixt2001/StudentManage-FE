@@ -7,7 +7,7 @@ import { ModuleService } from '../module/module.service';
 import { PeriodService } from '../period/period.service';
 import { PersonalDataService } from '../personal-data/personal-data.service';
 import { Chart } from 'chart.js';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
@@ -154,8 +154,8 @@ export class ReportComponent {
   }
 
   toggleModal() {
-    this.moduleForm.reset();
-    this.isVisible = true;
+    // this.moduleForm.reset();
+    // this.isVisible = true;
   }
 
   delete(id: any) {
@@ -185,5 +185,18 @@ export class ReportComponent {
         )
         .subscribe();
     }
+  }
+
+  export() {
+    let element = document.getElementById('tablez');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    console.log(ws);
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /* save to file */
+    XLSX.writeFile(wb, `ThongKe.xlsx`);
   }
 }
