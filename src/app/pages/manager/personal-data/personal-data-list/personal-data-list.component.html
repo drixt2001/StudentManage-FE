@@ -84,7 +84,12 @@
       Tìm Kiếm
     </button>
 
-    <button style="margin-left: 1rem" nz-button nzType="primary">
+    <button
+      (click)="show()"
+      style="margin-left: 1rem"
+      nz-button
+      nzType="primary"
+    >
       <span nz-icon nzType="file-excel"></span>
       Thêm Dữ Liệu
     </button>
@@ -145,3 +150,65 @@
     </nz-table>
   </div>
 </div>
+
+<nz-modal
+  nzCentered
+  nzWidth="50%"
+  [nzFooter]="modalFooter"
+  [(nzVisible)]="isVisibleModal"
+  (nzOnCancel)="handleCancel()"
+  nzTitle="Chọn File"
+>
+  <ng-container *nzModalContent>
+    <nz-upload [nzBeforeUpload]="beforeUpload">
+      <button nz-button>
+        <span nz-icon nzType="upload"></span>
+        Chọn File Excel
+      </button>
+    </nz-upload>
+
+    <nz-table nzBordered #table [nzData]="personalData2">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th *ngIf="selectedRole === 'teacher'">Mã Giảng Viên</th>
+          <th *ngIf="selectedRole === 'student'">Mã Sinh Viên</th>
+          <th>Họ Và Tên</th>
+          <th>Ngày Sinh</th>
+          <th>Khoa</th>
+          <th *ngIf="selectedRole === 'student'">Lớp</th>
+          <th>Số Lượng Ảnh</th>
+          <th>Hành Động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of table.data">
+          <td>{{ table.data.indexOf(data) + 1 }}</td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ convertDate(data.birthday) }}</td>
+          <td>{{ data.department }}</td>
+          <td *ngIf="selectedRole === 'student'">{{ data.class_name }}</td>
+          <td>{{ data.pictures }}</td>
+          <td>
+            <a [routerLink]="['sua', data.id]">Xem</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a
+              (nzOnConfirm)="delete(data.id)"
+              nzType="default"
+              nzDanger
+              nz-popconfirm
+              nzPopconfirmTitle="Xác nhận xóa người dùng này? Không thể phục hồi dữ liệu!"
+              nzPopconfirmPlacement="topRight"
+              >Xóa</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </nz-table></ng-container
+  >
+
+  <ng-template #modalFooter>
+    <button (click)="handleCancel()" nz-button nzType="default">Đóng</button>
+  </ng-template>
+</nz-modal>

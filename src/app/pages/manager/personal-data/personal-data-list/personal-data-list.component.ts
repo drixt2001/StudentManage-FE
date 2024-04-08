@@ -4,6 +4,8 @@ import * as dayjs from 'dayjs';
 import { DepartmentService } from '../../department/department.service';
 import { map } from 'rxjs';
 import { ToastService } from 'src/app/components/toast/toast.service';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
+import readXlsxFile from 'read-excel-file';
 
 @Component({
   selector: 'app-personal-data-list',
@@ -26,7 +28,9 @@ export class PersonalDataListComponent implements OnInit {
   departmentData: any[] = [];
   classData: any[] = [];
   personalData: any[] = [];
-
+  listStudent: any[] = [];
+  isVisibleModal = false;
+  personalData2: any[] = [];
   ngOnInit(): void {
     this.selectedRole = 'teacher';
     this.getData();
@@ -89,4 +93,21 @@ export class PersonalDataListComponent implements OnInit {
       )
       .subscribe();
   }
+
+  handleCancel() {
+    this.isVisibleModal = false;
+  }
+
+  show() {
+    this.isVisibleModal = true;
+  }
+
+  beforeUpload = (file: NzUploadFile): boolean => {
+    readXlsxFile(file as any).then((rows) => {
+      console.log(rows);
+      // `rows` is an array of rows
+      // each row being an array of cells.
+    });
+    return false;
+  };
 }

@@ -25,6 +25,7 @@
     "fs": "^0.0.1-security",
     "ng-zorro-antd": "^15.1.0",
     "ngx-socket-io": "^4.4.0",
+    "read-excel-file": "^5.7.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",
